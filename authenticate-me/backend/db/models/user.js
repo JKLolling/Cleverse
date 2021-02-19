@@ -1,5 +1,6 @@
 'use strict';
 const { Validator } = require('sequelize')
+const { bcrypt } = require('bcryptjs')
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User',
@@ -50,11 +51,70 @@ module.exports = (sequelize, DataTypes) => {
           unique: true,
           fields: ['username']
         }
-      ]
+      ],
+      defaultScope: {
+        attributes: {
+          exclude: ['email', 'hashedPassword', 'createdAt', 'updatedAt']
+        }
+      },
+      scopes: {
+        currentUser: {
+          attributes: {
+            exclude: ['hasedPassword']
+          }
+        },
+        loginUser: {
+          attributes: {}
+        }
+      },
     }
   );
   User.associate = function (models) {
     // associations can be defined here
   };
+
+  // This is a way to add class methods to user
+  // There is alternative syntax in the docs that allows us to add the methods directly
+  User.prototype.toSafeObject = function () {
+    const { id, username, email } = this
+    return { id, username, email }
+  }
+
+  User.prototype.validatePassword = function (password) {
+    return bcrypt.compareSync(password, this.hashedPassword.toString())
+  }
+
+  User.getCurrentUserById = async function (id) {
+    return await User.scope('currentUser').findByPk(id)
+  }
+
+  //What the fuck is a credential?
+  User.login = async function ({ credential, password }) {
+    const { Op } = require('sequelize')
+    const user = await User.scope('loginUser').findOne({
+      where: {
+        [Op.or]: {
+          username: credential,
+          email: credential,
+        }
+      }
+    })
+    if (user && user.validatePassword(password)) {
+      return User.getCurrentUserById(user.id)
+    }
+  }
+
+  User.signup = async function (username, email, password) {
+    // The reading says to do it w/ hashSync. Why
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const user = await User.create({
+      username,
+      email,
+      password
+    })
+    return User.getCurrentUserById(user.id)
+  }
+
+
   return User;
 };
