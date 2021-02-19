@@ -22,3 +22,41 @@ const setTokenCookie = (res, user) => {
 
   return token
 }
+
+const restoreUser = (req, res, next) => {
+  const { token } = req.cookies
+
+  return jwt.verify(token, secret, null, async (err, jwtPayload) => {
+    // Why don't we clear the
+    if (err) {
+      return next()
+    }
+
+    try {
+      const { id } = jwtPayload.data
+      req.user = await User.getCurrentUserById(id)
+    } catch (e) {
+      res.clearCookie('token')
+      return next()
+    }
+
+    if (!req.user) res.clearCookie('token')
+
+    return next()
+  })
+}
+
+const requireAuth = [
+  restoreUser,
+  function (req, res, next) {
+    if (req.user) return next();
+
+    const err = new Error('Unauthorized');
+    err.title = 'Unauthorized';
+    err.errors = ['Unauthorized'];
+    err.status = 401;
+    return next(err);
+  },
+];
+
+module.exports = { requireAuth, setTokenCookie, restoreUser }
