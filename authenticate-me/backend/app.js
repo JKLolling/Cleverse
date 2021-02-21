@@ -25,6 +25,9 @@ app.use(helmet({
   contentSecurityPolicy: false
 }))
 
+
+// Literally any request is checked by csrf. It is app wide middleware
+// Why? Why have such an intense policy?
 app.use(
   csurf({
     cookie: {
