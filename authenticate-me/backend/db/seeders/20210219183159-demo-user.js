@@ -13,11 +13,6 @@ module.exports = {
         seedGenerated: true,
       })
     }
-    fakePeople.push({
-      username: faker.internet.userName(),
-      email: faker.internet.email(),
-      hashedPassword: bcrypt.hashSync('password')
-    })
     return queryInterface.bulkInsert('Users', fakePeople, {});
   },
 
