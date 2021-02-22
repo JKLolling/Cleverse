@@ -16,19 +16,26 @@ function Navigation({ isLoaded }) {
   } else {
     sessionLinks = (
       <>
-        <NavLink to="/login">Log In</NavLink>
-        <NavLink to="/signup">Sign Up</NavLink>
+        <NavLink to="/login" id='nav_login'>LOG IN</NavLink>
+        <NavLink to="/signup" id='nav_signup'>SIGN UP</NavLink>
       </>
     );
   }
 
   return (
-    <ul>
-      <li>
-        <NavLink exact to="/">Home</NavLink>
-        {isLoaded && sessionLinks}
-      </li>
-    </ul>
+    <nav>
+      <ul>
+        <li>
+          <input type='search' placeholder='Search for lyrics & more...' />
+        </li>
+        <li id='nav_logo'>
+          <NavLink exact to="/">CLEVERSE</NavLink>
+        </li>
+        <li>
+          {isLoaded && sessionLinks}
+        </li>
+      </ul>
+    </nav>
   );
 }
 

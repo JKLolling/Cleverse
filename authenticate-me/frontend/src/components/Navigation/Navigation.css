@@ -1,0 +1,170 @@
+nav {
+  background-color: #ffff64;
+  width: 100%;
+  height: 41px;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* z-index: 5; */
+
+  /* Genius has this as a separate navBar with tons of features that I'm not going to implement */
+  border-bottom: 41px solid rgb(18, 18, 18);
+
+  font-family: inherit;
+}
+
+
+nav ul {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+nav li {
+  list-style-type: none;
+}
+
+nav a {
+  color: black;
+  text-decoration: none;
+  font-size: 1.5em;
+}
+
+nav input {
+  background-color: white;
+  padding: 5px;
+
+  font-size: 1.05em;
+  color:black;
+
+  border: none;
+
+  height: 30px;
+  width: 220px;
+}
+
+#nav_logo{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-family: 'wedgie';
+  font-family: 'strenuous';
+  font-family: 'floorlight';
+  font-family: 'disco3';
+  font-family: 'Bungee';
+  font-family: 'Astro';
+}
+
+#nav_login{
+  font-size: 1em;
+  padding: 5px;
+}
+
+#nav_signup{
+  font-size: 1em;
+  padding: 5px;
+}
+
+
+
+/*
+
+nav p {
+  color: #ce3aa1
+}
+
+.logo {
+  font-size: 3em;
+  color: #ce3aa1;
+}
+
+.logo:hover {
+  font-size: 3.5em;
+}
+
+.logoutBtn {
+  color: black;
+  background-color: #ce3aa1;
+  border: none;
+  height: 1.7rem;
+  width: 6rem;
+  border-radius: 10px;
+  font-size: large;
+}
+
+.logoutBtn:hover {
+  font-size: 1.25em;
+  height: 1.5em;
+  width: 5em;
+}
+/*
+#navbar_search{
+  width: max-content;
+} */
+
+/* #navbar_logo {
+  width: 80px;
+}
+#navbar_login {
+  width: 65px;
+}
+
+#navbar_logout {
+  display: flex;
+  justify-content: flex-end;
+  width: 110px;
+}
+
+#navbar_signup {
+  display: flex;
+  justify-content: flex-end;
+  width: 110px;
+}
+
+#navbar_welcome {
+  display: flex;
+  justify-content: center;
+  width: 350px;
+} */
+
+@font-face {
+  font-family: 'Astro';
+  src: url('../../fonts/astro/astro.ttf')
+}
+
+@font-face {
+  font-family: 'Bungee';
+  src: url('../../fonts/bungee/fonts/Bungee_Basic/Bungee-Regular.ttf')
+}
+
+@font-face {
+    /* don't bold */
+  font-family: 'disco3';
+  src: url('../../fonts/disco-3/Disco3.ttf')
+}
+
+@font-face {
+  font-family: 'floorlight';
+  src: url('../../fonts/floorlight/Floorlight.ttf')
+}
+
+@font-face {
+  font-family: 'strenuous';
+  src: url('../../fonts/strenuous/strenuous\ 3d.ttf')
+}
+
+@font-face {
+  font-family: 'wedgie';
+  src: url('../../fonts/wedgie/Wedgie\ Regular.ttf')
+}

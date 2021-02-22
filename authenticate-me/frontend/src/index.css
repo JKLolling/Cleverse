@@ -1,1 +1,17 @@
 /* TODO Add site wide styles */
+body {
+  font-family: 'Programme Regular';
+  color: black;
+}
+
+
+@font-face {
+  font-family: "Programme Regular";
+  src: url('./fonts/Programme/WOFF/Programme-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Programme Bold';
+  src: url('./fonts/Programme/WOFF/Programme-Bold.woff') format('woff')
+  url('./fonts/Programme/WOFF2/Programme-Bold.woff2') format('woff2')
+}
