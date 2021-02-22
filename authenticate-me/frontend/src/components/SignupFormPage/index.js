@@ -1,5 +1,5 @@
 // frontend/src/components/SignupFormPage/index.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 import * as sessionActions from "../../store/session";
@@ -13,6 +13,14 @@ function SignupFormPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    const nav = document.getElementsByClassName('nav')[0]
+    nav.classList.add('form_bottom')
+    return () => {
+      nav.classList.remove('form_bottom')
+    }
+  }, []);
 
   if (sessionUser) {
     return <Redirect to="/" />;
@@ -32,48 +40,60 @@ function SignupFormPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ul>
-        {errors.map((error, idx) => <li key={idx}>{error}</li>)}
-      </ul>
-      <label>
-        Email
-        <input
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Username
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Password
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Confirm Password
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-      </label>
-      <button type="submit">Sign Up</button>
-    </form>
+    <div className='signup_wrapper'>
+      <div className='signup_title'> SIGN UP! </div>
+      <div className='signup_form_wrapper'>
+        <form onSubmit={handleSubmit}>
+          <ul>
+            {errors.map((error, idx) => <li key={idx}>{error}</li>)}
+          </ul>
+          <div className='signup_inputDiv'>
+            <label htmlFor='email'> Email </label>
+            <input
+              id='email'
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className='signup_inputDiv'>
+            <label htmlFor='username'> Username </label>
+            <input
+              id='username'
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className='signup_inputDiv'>
+            <label htmlFor='password'>Password </label>
+            <input
+              id='password'
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className='signup_inputDiv'>
+            <label htmlFor='confirm_password'> Confirm Password </label>
+            <input
+              id='confirm_password'
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+
+          </div>
+          <div className='signup_buttonDiv'>
+            <button type="submit">Sign Up</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 

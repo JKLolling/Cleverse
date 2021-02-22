@@ -16,14 +16,14 @@ function Navigation({ isLoaded }) {
   } else {
     sessionLinks = (
       <>
-        <NavLink to="/login" id='nav_login'>LOG IN</NavLink>
+        <NavLink to="/login" id='nav_login'>SIGN IN</NavLink>
         <NavLink to="/signup" id='nav_signup'>SIGN UP</NavLink>
       </>
     );
   }
 
   return (
-    <nav>
+    <nav className='nav'>
       <ul>
         <li>
           <input type='search' placeholder='Search for lyrics & more...' />

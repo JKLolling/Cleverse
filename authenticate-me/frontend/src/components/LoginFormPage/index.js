@@ -1,5 +1,5 @@
 // frontend/src/components/LoginFormPage/index.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as sessionActions from '../../store/session';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -12,9 +12,18 @@ function LoginFormPage() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState([]);
 
+  useEffect(() => {
+    const nav = document.getElementsByClassName('nav')[0]
+    nav.classList.add('form_bottom')
+    return () => {
+      nav.classList.remove('form_bottom')
+    }
+  }, []);
+
   if (sessionUser) return (
     <Redirect to="/" />
   );
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,30 +36,39 @@ function LoginFormPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ul>
-        {errors.map((error, idx) => <li key={idx}>{error}</li>)}
-      </ul>
-      <label>
-        Username or Email
-        <input
-          type="text"
-          value={credential}
-          onChange={(e) => setCredential(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Password
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      <button type="submit">Log In</button>
-    </form>
+    <div className='signup_wrapper'>
+      <div className='signup_title'> SIGN IN! </div>
+      <div className='signup_form_wrapper'>
+        <form onSubmit={handleSubmit}>
+          <ul>
+            {errors.map((error, idx) => <li key={idx}>{error}</li>)}
+          </ul>
+          <div className='signup_inputDiv'>
+            <label htmlFor='credential'> Username or Email </label>
+            <input
+              id='credential'
+              type="text"
+              value={credential}
+              onChange={(e) => setCredential(e.target.value)}
+              required
+            />
+          </div>
+          <div className='signup_inputDiv'>
+            <label htmlFor='password'> Password </label>
+            <input
+              id='password'
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className='signup_buttonDiv'>
+            <button type="submit">Log In</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
