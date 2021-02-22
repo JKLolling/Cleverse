@@ -76,67 +76,6 @@ nav input {
 }
 
 
-
-/*
-
-nav p {
-  color: #ce3aa1
-}
-
-.logo {
-  font-size: 3em;
-  color: #ce3aa1;
-}
-
-.logo:hover {
-  font-size: 3.5em;
-}
-
-.logoutBtn {
-  color: black;
-  background-color: #ce3aa1;
-  border: none;
-  height: 1.7rem;
-  width: 6rem;
-  border-radius: 10px;
-  font-size: large;
-}
-
-.logoutBtn:hover {
-  font-size: 1.25em;
-  height: 1.5em;
-  width: 5em;
-}
-/*
-#navbar_search{
-  width: max-content;
-} */
-
-/* #navbar_logo {
-  width: 80px;
-}
-#navbar_login {
-  width: 65px;
-}
-
-#navbar_logout {
-  display: flex;
-  justify-content: flex-end;
-  width: 110px;
-}
-
-#navbar_signup {
-  display: flex;
-  justify-content: flex-end;
-  width: 110px;
-}
-
-#navbar_welcome {
-  display: flex;
-  justify-content: center;
-  width: 350px;
-} */
-
 @font-face {
   font-family: 'Astro';
   src: url('../../fonts/astro/astro.ttf')

@@ -2,8 +2,10 @@
 body {
   font-family: 'Programme Regular';
   color: black;
+}
 
-  margin-top: 90px;
+.black_background {
+  background-color: black;
 }
 
 

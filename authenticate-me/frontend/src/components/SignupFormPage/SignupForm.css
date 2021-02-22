@@ -1,10 +1,6 @@
-body {
+/* body {
   background-color: black
-}
-
-#nav {
-  border-bottom: 41px solid black
-}
+} */
 
 /* Make the form center */
 .signup_wrapper {
@@ -63,4 +59,10 @@ body {
   display:flex;
   justify-content: center;
   align-content: center;
+}
+
+.signup_nav-to-signin {
+  text-decoration: none;
+  color: #ffff64;
+  padding-left: 5px;
 }

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import * as sessionActions from '../../store/session';
 import { useDispatch, useSelector } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 import './LoginForm.css';
 
 function LoginFormPage() {
@@ -14,9 +14,12 @@ function LoginFormPage() {
 
   useEffect(() => {
     const nav = document.getElementsByClassName('nav')[0]
+    const body = document.getElementsByTagName('body')[0]
     nav.classList.add('form_bottom')
+    body.classList.add('black_background')
     return () => {
       nav.classList.remove('form_bottom')
+      body.classList.remove('black_background')
     }
   }, []);
 
@@ -65,6 +68,12 @@ function LoginFormPage() {
           </div>
           <div className='signup_buttonDiv'>
             <button type="submit">Log In</button>
+          </div>
+          <div>
+            Don't have an account yet?
+            <NavLink to='/signup' className='signup_nav-to-signin'>
+              Sign up here
+            </NavLink>
           </div>
         </form>
       </div>

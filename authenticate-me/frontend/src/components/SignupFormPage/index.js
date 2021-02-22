@@ -1,7 +1,7 @@
 // frontend/src/components/SignupFormPage/index.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import * as sessionActions from "../../store/session";
 import './SignupForm.css';
 
@@ -16,9 +16,12 @@ function SignupFormPage() {
 
   useEffect(() => {
     const nav = document.getElementsByClassName('nav')[0]
+    const body = document.getElementsByTagName('body')[0]
     nav.classList.add('form_bottom')
+    body.classList.add('black_background')
     return () => {
       nav.classList.remove('form_bottom')
+      body.classList.remove('black_background')
     }
   }, []);
 
@@ -86,10 +89,15 @@ function SignupFormPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-
           </div>
           <div className='signup_buttonDiv'>
             <button type="submit">Sign Up</button>
+          </div>
+          <div>
+            Already have an account?
+            <NavLink to='/login' className='signup_nav-to-signin'>
+              Sign in here
+            </NavLink>
           </div>
         </form>
       </div>
