@@ -12,6 +12,8 @@ nav {
   align-items: center;
 
   border-bottom: 41px solid rgb(18, 18, 18);
+
+  z-index: 2;
 }
 
 .form_bottom {

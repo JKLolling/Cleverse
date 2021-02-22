@@ -66,3 +66,11 @@
   color: #ffff64;
   padding-left: 5px;
 }
+
+.signup_errorsUl {
+  color: #ffff64;
+  z-index: 1;
+
+  list-style-type: none;
+  padding-left: 0;
+}
