@@ -59,11 +59,6 @@ nav input {
   left: 50%;
   transform: translateX(-50%);
 
-  font-family: 'wedgie';
-  font-family: 'strenuous';
-  font-family: 'floorlight';
-  font-family: 'disco3';
-  font-family: 'Bungee';
   font-family: 'Astro';
 }
 
@@ -81,30 +76,4 @@ nav input {
 @font-face {
   font-family: 'Astro';
   src: url('../../fonts/astro/astro.ttf')
-}
-
-@font-face {
-  font-family: 'Bungee';
-  src: url('../../fonts/bungee/fonts/Bungee_Basic/Bungee-Regular.ttf')
-}
-
-@font-face {
-    /* don't bold */
-  font-family: 'disco3';
-  src: url('../../fonts/disco-3/Disco3.ttf')
-}
-
-@font-face {
-  font-family: 'floorlight';
-  src: url('../../fonts/floorlight/Floorlight.ttf')
-}
-
-@font-face {
-  font-family: 'strenuous';
-  src: url('../../fonts/strenuous/strenuous\ 3d.ttf')
-}
-
-@font-face {
-  font-family: 'wedgie';
-  src: url('../../fonts/wedgie/Wedgie\ Regular.ttf')
 }
