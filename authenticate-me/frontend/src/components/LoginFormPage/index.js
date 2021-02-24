@@ -67,7 +67,7 @@ function LoginFormPage() {
             />
           </div>
           <div className='signup_buttonDiv'>
-            <button type="submit">Log In</button>
+            <button type="submit">Sign In</button>
           </div>
           <div>
             Don't have an account yet?

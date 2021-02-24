@@ -26,7 +26,7 @@ function Navigation({ isLoaded }) {
     <nav className='nav'>
       <ul>
         <li>
-          <input type='search' placeholder='Search for lyrics & more...' />
+          <input type='search' placeholder='Search for lyrics & more...' style={{ fontFamily: "Programme Regular" }} />
         </li>
         <li id='nav_logo'>
           <NavLink exact to="/">CLEVERSE</NavLink>

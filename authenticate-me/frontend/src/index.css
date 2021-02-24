@@ -2,8 +2,13 @@
 body {
   font-family: 'Programme Regular';
   color: black;
+  background-color: #f7f7f7;
 
-  margin-top: 90px;
+  margin-top: 82px;
+  margin-left: 0;
+  margin-right: 0;
+
+  font-feature-settings: 'ss07', 'ss08', 'ss11', 'ss12', 'ss15', 'ss16', 'ss18'
 }
 
 .black_background {
@@ -13,7 +18,8 @@ body {
 
 @font-face {
   font-family: "Programme Regular";
-  src: url('./fonts/Programme/WOFF/Programme-Regular.woff') format('woff');
+  src: url('./fonts/Programme/TTF/Programme-Regular.otf')
+  /* src: url('./fonts/Programme/WOFF/Programme-Regular.woff') format('woff'); */
 }
 
 @font-face {

@@ -6,6 +6,7 @@ import LoginFormPage from "./components/LoginFormPage";
 import SignupFormPage from "./components/SignupFormPage";
 import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation";
+import TrackPage from "./components/TrackPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -24,6 +25,12 @@ function App() {
           </Route>
           <Route path="/signup">
             <SignupFormPage />
+          </Route>
+          <Route path='/tracks/:trackId'>
+            <TrackPage />
+          </Route>
+          <Route>
+            Sorry, the requested page could not be found
           </Route>
         </Switch>
       )}

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       featuring: DataTypes.STRING,
       title: DataTypes.STRING,
       albumCover: DataTypes.STRING,
-      albumTitle: DataTypes.String,
+      albumTitle: DataTypes.STRING,
       seedGenerated: DataTypes.BOOLEAN,
     }, {});
   Track.associate = function (models) {
