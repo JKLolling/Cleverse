@@ -79,6 +79,24 @@
   margin: 0 auto;
 
   background-color: white;
+}
+
+.track_lyric_wrapper {
+  box-sizing: border-box;
+
+  white-space: pre-wrap;
+
+  width: 970px;
+  min-height: 100vh;
+  margin: 0 auto;
+
+  background-color: white;
 
   padding: 15px;
+}
+
+
+
+.highlight {
+  background-color: #ffff64;
 }

@@ -8,7 +8,7 @@ import './TrackPage.css'
 
 function TrackPage() {
   const [isLoaded, setIsLoaded] = useState(false)
-  const [lyrics, setLyrics] = useState(['hi'])
+  const [lyrics, setLyrics] = useState('')
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -37,9 +37,16 @@ function TrackPage() {
     }
   }, [isLoaded])
 
+  // useEffect(() => {
+  //   const selection = window.getSelection()
+  //   console.log(selection)
+  // })
+
   useEffect(() => {
     if (trackData.track) {
       let temp = (trackData.track.lyrics.split('\n'))
+      temp = temp.map(string => string.trimLeft())
+      temp = temp.join('\n')
       setLyrics(temp)
     }
   }, [isLoaded])
@@ -62,6 +69,41 @@ function TrackPage() {
           {trackData.track.featuring}
         </span>
       </div>
+  }
+
+
+  const selectedLyric = () => {
+    const selection = window.getSelection()
+    let start = selection.anchorNode
+    let startOffset = selection.anchorOffset
+    let end = selection.focusNode
+    let endOffset = selection.focusOffset
+
+    if (startOffset > endOffset) {
+      let temp = [start, startOffset]
+      start = end
+      startOffset = endOffset
+      end = temp[0]
+      endOffset = temp[1]
+    }
+    console.log(startOffset, endOffset)
+
+    selection.removeAllRanges();
+
+    let range = document.createRange()
+    range.setStart(start, startOffset)
+    range.setEnd(end, endOffset)
+    selection.addRange(range)
+
+    const span = document.createElement('span')
+    span.classList.add('highlight')
+    try {
+      range.surroundContents(span)
+
+    } catch (error) {
+      console.log('Can\'t wrap an existing annotation')
+    }
+    // console.log(range.toString())
   }
 
   return (
@@ -95,14 +137,8 @@ function TrackPage() {
             <div className='track_lyric_anno_wrapper'>
               <div className='track_anno_wrapper'>
               </div>
-              <div className='track_lyric_wrapper'>
-                {lyrics.map((lyric, index) => {
-                  if (lyric === '') {
-                    return <div key={index}>&nbsp;</div>
-                  }
-                  return <div key={index}>{lyric}</div>
-                }
-                )}
+              <div className='track_lyric_wrapper' onMouseUp={selectedLyric}>
+                {lyrics}
               </div>
             </div>
           </div >
