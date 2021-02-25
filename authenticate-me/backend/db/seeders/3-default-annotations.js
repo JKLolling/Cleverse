@@ -70,7 +70,7 @@ module.exports = {
       {
         trackId: tracksObj['Walk on the Wild Side'],
         userId: users[1].id,
-        annotation: ` This story is about Holly Woodlawn, a transgender actress and former Warhol superstar, who appeared in Warhol movies such as Trash (1970) and Women in Revolt (1972) and became one of the first American transgender celebrities..
+        annotation: `This story is about Holly Woodlawn, a transgender actress and former Warhol superstar, who appeared in Warhol movies such as Trash (1970) and Women in Revolt (1972) and became one of the first American transgender celebrities..
         According to her autobiography, A Low Life in High Heels, Holly Woodlawn ran away from her home in Miami, Florida, for New York City after her parents discovered she was a gay man (not yet a transgender woman). In 1963, at the age of fifteen, Holly took a Greyhound bus to Georgia and then hitchhiked the rest of the way to New York City.`,
         lyric: `Holly came from Miami, FLA
         Hitchhiked her way across the U.S.A

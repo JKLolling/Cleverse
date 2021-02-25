@@ -18,10 +18,7 @@ function TrackPage() {
   const trackData = useSelector(state => state.track)
   const colorThief = new ColorThief()
 
-  useEffect(() => {
-
-  })
-
+  // Get lyrics from the store
   useEffect(() => {
     dispatch(trackActions.asyncFetchTrack(id))
       .then(() => setIsLoaded(true))
@@ -167,6 +164,7 @@ function TrackPage() {
 
     annotation = annotation.replaceAll('          ', '')
     annotation = annotation.replaceAll('        ', '')
+    annotation.trimLeft()
 
     setActiveAnnotation(annotation)
   }

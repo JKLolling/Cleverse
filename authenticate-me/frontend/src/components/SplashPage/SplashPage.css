@@ -1,0 +1,60 @@
+.splash_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.splash_trackListItem {
+  width: 1000px;
+
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: 1fr;
+
+  align-items: center;
+
+  font-size: 1.5em;
+  padding: 10px 0px;
+
+  border-bottom: 2px solid grey;
+
+  text-decoration: none;
+  color: black;
+}
+
+.splash_trackListItem:hover {
+  box-shadow: 1px 1px 4px 0px black;
+  transform: translateY(-10px);
+
+  background-color: white;
+}
+
+
+
+
+.splash_trackListIndex {
+  padding-left: 10px;
+  color: rebeccapurple;
+  grid-column: 1/2;
+}
+
+.splash_trackListAlbumCover{
+  width: 75px;
+
+  grid-column: 2/4;
+  justify-self: center;
+  padding-right: 10px;
+}
+.splash_trackListTitle {
+  grid-column: 4/10;
+}
+.splash_trackListBand {
+  grid-column: 11/15;
+  font-size: .75em;
+}
+
+.splash_trackListAlbumTitle {
+  grid-column: 15/21;
+  font-size: .75em;
+}
