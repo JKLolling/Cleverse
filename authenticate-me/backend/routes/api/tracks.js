@@ -1,11 +1,13 @@
 const express = require('express')
 const asyncHandler = require('express-async-handler')
-const { Track } = require('../../db/models')
+const { Track, Annotation } = require('../../db/models')
 
 const router = express.Router()
 
 router.get('/:id(\\d+)', asyncHandler(async (req, res) => {
-  const track = await Track.findByPk((req.params.id), {})
+  const track = await Track.findByPk((req.params.id), {
+    include: Annotation
+  })
   res.json({ track })
 }))
 

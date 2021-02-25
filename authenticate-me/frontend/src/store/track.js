@@ -22,6 +22,7 @@ export const asyncFetchTrack = (trackId) => async (dispatch) => {
   } else {
     data = { track: null }
   }
+  // console.log(data.track.Annotations)
   dispatch(getTrack(data))
   return data
 }

@@ -30,12 +30,13 @@
 }
 
 .track_banner_leftInfo {
-  width: 60%;
+  width: 58%;
   display: flex;
 
   color: #9a9a9a;
 
   transform: translateX(-3%);
+
 }
 
 .track_banner_leftInfo_data{
@@ -82,9 +83,13 @@
 }
 
 .track_lyric_wrapper {
+  font-family: 'Programme Light';
   box-sizing: border-box;
 
   white-space: pre-wrap;
+
+  font-size: 1.15em;
+  line-height: 1.7em;
 
   width: 970px;
   min-height: 100vh;
@@ -98,5 +103,18 @@
 
 
 .highlight {
-  background-color: #ffff64;
+  background-color: #dddddd;
+}
+
+
+/* @font-face {
+  font-family: 'Programme Bold';
+  src: url('./fonts/Programme/WOFF/Programme-Bold.woff') format('woff')
+  url('./fonts/Programme/WOFF2/Programme-Bold.woff2') format('woff2')
+} */
+
+@font-face {
+  font-family: 'Programme Light';
+  src: url('../../fonts/Programme/WOFF/Programme-Light.woff') format('woff'),
+  url('../../fonts/Programme/WOFF2/Programme-Light.woff2') format('woff2');
 }

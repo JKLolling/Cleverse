@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       seedGenerated: DataTypes.BOOLEAN,
     }, {});
   Track.associate = function (models) {
-    // associations can be defined here
+    Track.hasMany(models.Annotation, { foreignKey: 'trackId' })
   };
   return Track;
 };

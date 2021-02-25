@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   User.associate = function (models) {
-    // associations can be defined here
+    User.hasMany(models.Annotation, { foreignKey: 'userId' })
   };
 
   // This is a way to add class methods to user
