@@ -28,8 +28,11 @@ function TrackPage() {
   useEffect(() => {
     if (isLoaded) {
       let coverImg = document.getElementById('coverPhoto')
+
       if (coverImg?.complete) {
-        colorThief.getColor(coverImg)
+        const colors = (colorThief.getPalette(coverImg));
+        const temp = `rgb(${colors[0][0]},${colors[0][1]},${colors[0][2]})`
+        document.body.style.setProperty('--cover-color', temp)
       } else {
         coverImg.addEventListener('load', function () {
           const colors = (colorThief.getPalette(coverImg));
