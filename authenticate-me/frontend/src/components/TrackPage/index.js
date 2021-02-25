@@ -10,7 +10,7 @@ function TrackPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [lyrics, setLyrics] = useState('')
   const [annotations, setAnnotations] = useState({})
-  const [activeAnnotation, setActiveAnnotation] = useState('Hello')
+  const [activeAnnotation, setActiveAnnotation] = useState('')
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -32,7 +32,8 @@ function TrackPage() {
       if (coverImg?.complete) {
         colorThief.getColor(coverImg)
       } else {
-        coverImg?.addEventListener('load', function () {
+        console.log('not loaded')
+        coverImg.addEventListener('load', function () {
           const colors = (colorThief.getPalette(coverImg));
           const temp = `rgb(${colors[0][0]},${colors[0][1]},${colors[0][2]})`
           document.body.style.setProperty('--cover-color', temp)
@@ -188,9 +189,6 @@ function TrackPage() {
         </span>
       </div>
   }
-
-
-  // console.log(annotations)
 
   return (
     <>
