@@ -21,16 +21,11 @@ function SplashPage() {
     array.push(tracksObj[key])
   }
 
-  const handleClick = (e) => {
-    console.log(e.currentTarget.children[2].innerText)
-    // const title = e.currentTarget.children[2].innerText
-    // (e.currentTarget.children[2].innerText
-  }
   return (
     <div className='splash_wrapper'>
       <div className='splash_listWrapper'>
         {array.map((track, i) => {
-          return <NavLink to={`/tracks/${track.id}`} key={track.title + track.band} className='splash_trackListItem' onClick={handleClick}>
+          return <NavLink to={`/tracks/${track.id}`} key={track.title + track.band} className='splash_trackListItem'>
             <span className='splash_trackListIndex'>
               {i + 1}
             </span>

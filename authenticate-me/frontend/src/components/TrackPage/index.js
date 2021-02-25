@@ -27,12 +27,10 @@ function TrackPage() {
   // Color the banner
   useEffect(() => {
     let coverImg = document.getElementById('coverPhoto')
-
     if (isLoaded) {
       if (coverImg?.complete) {
         colorThief.getColor(coverImg)
       } else {
-        console.log('not loaded')
         coverImg.addEventListener('load', function () {
           const colors = (colorThief.getPalette(coverImg));
           const temp = `rgb(${colors[0][0]},${colors[0][1]},${colors[0][2]})`
