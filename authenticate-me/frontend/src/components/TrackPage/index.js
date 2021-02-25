@@ -26,8 +26,8 @@ function TrackPage() {
 
   // Color the banner
   useEffect(() => {
-    let coverImg = document.getElementById('coverPhoto')
     if (isLoaded) {
+      let coverImg = document.getElementById('coverPhoto')
       if (coverImg?.complete) {
         colorThief.getColor(coverImg)
       } else {
