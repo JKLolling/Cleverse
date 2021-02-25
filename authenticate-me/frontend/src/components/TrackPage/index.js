@@ -9,6 +9,7 @@ import './TrackPage.css'
 function TrackPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [lyrics, setLyrics] = useState('')
+  const [annotatedLyrics, setAnnotatedLyrics] = useState([])
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -51,8 +52,10 @@ function TrackPage() {
     }
   }, [isLoaded])
 
+
+  // Add existing annotations to the page
   useEffect(() => {
-    if (trackData.track) {
+    if (trackData.track && isLoaded) {
       let annotations = trackData.track.Annotations
       const array = []
       for (let i = 0; i < annotations.length; i++) {
@@ -62,18 +65,31 @@ function TrackPage() {
         annotation = annotation.replaceAll('          ', '')
         annotation = annotation.replaceAll('        ', '')
 
-        array.push([lyrics.indexOf(annotation), lyrics.indexOf(annotation) + annotation.length])
+
+        // If the lyric occurs multiple times, add the same annotation to the applicable lines
+        let index = 0
+        while (index > -1) {
+          let start = lyrics.indexOf(annotation, index)
+          let end = start + annotation.length
+
+          // If we actually find the lyric, start searching from the last found location (end) and push the coordinates to the array
+          if (start > -1) {
+            array.push([start, end])
+            index = end
+          } else {
+            index = -1
+          }
+        }
       }
 
       array.sort((a, b) => {
         if (a[0] > b[0]) return -1
         return 1
       })
-      console.log(array)
-      let node = document.getElementsByClassName('track_lyric_wrapper')[0]
+      setAnnotatedLyrics(array)
 
+      let node = document.getElementsByClassName('track_lyric_wrapper')[0]
       let textNode = document.createTextNode(lyrics)
-      console.log(textNode)
       node.appendChild(textNode)
 
       array.forEach(value => {
@@ -82,15 +98,12 @@ function TrackPage() {
         range.setEnd(textNode, value[1])
 
         const span = document.createElement('span')
+        // span.addEventListener('click', () => console.log('hi'))
         span.classList.add('highlight')
         range.surroundContents(span)
       })
-
-
-
-      console.log(array)
     }
-  }, [lyrics])
+  }, [lyrics, isLoaded])
 
   const highlightLyric = () => {
     const selection = window.getSelection()
@@ -106,19 +119,24 @@ function TrackPage() {
       end = temp[0]
       endOffset = temp[1]
     }
-    selection.removeAllRanges();
 
+    // Check if this lyric has already been annotated or contains lyrics that have been annotated
+    if (start.parentElement.className === 'highlight' || end.parentElement.className === 'highlight') {
+      return
+    }
+
+    selection.removeAllRanges();
     let range = document.createRange()
     range.setStart(start, startOffset)
     range.setEnd(end, endOffset)
     selection.addRange(range)
 
     const span = document.createElement('span')
-    span.classList.add('highlight')
+    span.classList.add('highlight-yellow')
     try {
       range.surroundContents(span)
     } catch (error) {
-      console.log('Can\'t wrap an existing annotation')
+      // console.log('Can\'t wrap an existing annotation')
     }
   }
 
@@ -126,6 +144,7 @@ function TrackPage() {
   if (isLoaded && !trackIsValid) {
     return <PageNotFound />
   }
+
   let imgSrc = ''
   if (isLoaded) {
     imgSrc = trackData.track.title.split(' ').join('_')
@@ -141,13 +160,12 @@ function TrackPage() {
       </div>
   }
 
-
   const retrieveAnnotation = (e) => {
-    const selection = window.getSelection()
-    let start = selection.anchorNode
-    let startOffset = selection.anchorOffset
+    // const selection = window.getSelection()
+    // let start = selection.anchorNode
+    // let startOffset = selection.anchorOffset
 
-    console.log(startOffset)
+    // console.log(startOffset)
   }
 
   return (

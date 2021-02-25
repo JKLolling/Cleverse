@@ -82,8 +82,35 @@ module.exports = {
         trackId: tracksObj['Walk on the Wild Side'],
         userId: users[2].id,
         annotation: `Holly is coaxing gentleman callers to experience, “The Wild Side”… A back alley subculture full of transgender persons, found in the streets of 1970’s New York City. Much of this lifestyle was prevalent in Andy Warhol’s art studio, titled, “The Factory”.`,
-        lyric: `She says, "Hey, babe, take a walk on the wild side"
-        Said, "Hey honey, take a walk on the wild side"`,
+        lyric: `"Hey honey, take a walk on the wild side"`,
+        seedGenerated: true,
+      },
+      {
+        trackId: tracksObj['Walk on the Wild Side'],
+        userId: users[2].id,
+        annotation: `Holly is coaxing gentleman callers to experience, “The Wild Side”… A back alley subculture full of transgender persons, found in the streets of 1970’s New York City. Much of this lifestyle was prevalent in Andy Warhol’s art studio, titled, “The Factory”.`,
+        lyric: `"Hey, babe, take a walk on the wild side"`,
+        seedGenerated: true,
+      },
+      {
+        trackId: tracksObj['Walk on the Wild Side'],
+        userId: users[2].id,
+        annotation: `Holly is coaxing gentleman callers to experience, “The Wild Side”… A back alley subculture full of transgender persons, found in the streets of 1970’s New York City. Much of this lifestyle was prevalent in Andy Warhol’s art studio, titled, “The Factory”.`,
+        lyric: `"Hey babe, take a walk on the wild side"`,
+        seedGenerated: true,
+      },
+      {
+        trackId: tracksObj['Walk on the Wild Side'],
+        userId: users[2].id,
+        annotation: `Holly is coaxing gentleman callers to experience, “The Wild Side”… A back alley subculture full of transgender persons, found in the streets of 1970’s New York City. Much of this lifestyle was prevalent in Andy Warhol’s art studio, titled, “The Factory”.`,
+        lyric: `"Hey Joe, take a walk on the wild side"`,
+        seedGenerated: true,
+      },
+      {
+        trackId: tracksObj['Walk on the Wild Side'],
+        userId: users[2].id,
+        annotation: `Holly is coaxing gentleman callers to experience, “The Wild Side”… A back alley subculture full of transgender persons, found in the streets of 1970’s New York City. Much of this lifestyle was prevalent in Andy Warhol’s art studio, titled, “The Factory”.`,
+        lyric: `"Hey sugar, take a walk on the wild side"`,
         seedGenerated: true,
       },
       {
@@ -122,6 +149,18 @@ module.exports = {
       {
         trackId: tracksObj['Walk on the Wild Side'],
         userId: users[2].id,
+        annotation: `This is a reference to the scat-singing filled hits from the Motown girl groups of the sixties – artists like The Supremes or Martha and the Vandellas.
+        Depending on the regional US market, the song was edited for what we now call political correctness. Some stations played a version that replaced the phrase with, “And the girls all say.”`,
+        lyric: `And the colored girls say
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo`,
+        seedGenerated: true,
+      },
+      {
+        trackId: tracksObj['Walk on the Wild Side'],
+        userId: users[2].id,
         annotation: `Female trio Thunderthighs provided these backing vocals: Dari Lallou, Karen Friedman, and Casey Synge.
         They’re not “colored”. They’re white and British. Lou Reed is rarely on-the-nose like that.`,
         lyric: `(Doo, doo-doo, doo-doo, doo-doo-doo
@@ -129,6 +168,22 @@ module.exports = {
           Doo, doo-doo, doo-doo, doo-doo-doo
           Doo, doo-doo, doo-doo, doo-doo-doo
           Dooh)`,
+        seedGenerated: true,
+      },
+      {
+        trackId: tracksObj['Walk on the Wild Side'],
+        userId: users[2].id,
+        annotation: `Female trio Thunderthighs provided these backing vocals: Dari Lallou, Karen Friedman, and Casey Synge.
+        They’re not “colored”. They’re white and British. Lou Reed is rarely on-the-nose like that.`,
+        lyric: `(Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Doo, doo-doo, doo-doo, doo-doo-doo
+        Dooh)`,
         seedGenerated: true,
       },
       {

@@ -23,7 +23,7 @@ module.exports = {
         allowNull: false,
       },
       lyric: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       seedGenerated: {
         type: Sequelize.BOOLEAN

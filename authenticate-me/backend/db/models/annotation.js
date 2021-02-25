@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     trackId: DataTypes.INTEGER,
     annotation: DataTypes.TEXT,
-    lyric: DataTypes.STRING,
+    lyric: DataTypes.TEXT,
     seedGenerated: DataTypes.BOOLEAN
   }, {});
   Annotation.associate = function (models) {
