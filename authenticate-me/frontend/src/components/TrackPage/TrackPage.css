@@ -118,6 +118,9 @@
   background-color: white;
 
   padding: 15px;
+
+  position: relative;
+  top: 0
 }
 
 

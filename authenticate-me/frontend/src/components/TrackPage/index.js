@@ -11,6 +11,7 @@ function TrackPage() {
   const [lyrics, setLyrics] = useState('')
   const [annotations, setAnnotations] = useState({})
   const [activeAnnotation, setActiveAnnotation] = useState('')
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -31,12 +32,12 @@ function TrackPage() {
 
       if (coverImg?.complete) {
         const colors = (colorThief.getPalette(coverImg));
-        const temp = `rgb(${colors[0][0]},${colors[0][1]},${colors[0][2]})`
+        const temp = `rgb(${colors[4][0]},${colors[4][1]},${colors[4][2]})`
         document.body.style.setProperty('--cover-color', temp)
       } else {
         coverImg.addEventListener('load', function () {
           const colors = (colorThief.getPalette(coverImg));
-          const temp = `rgb(${colors[0][0]},${colors[0][1]},${colors[0][2]})`
+          const temp = `rgb(${colors[4][0]},${colors[4][1]},${colors[4][2]})`
           document.body.style.setProperty('--cover-color', temp)
         });
       }
@@ -169,6 +170,13 @@ function TrackPage() {
     annotation.trimLeft()
 
     setActiveAnnotation(annotation)
+    setMousePosition({ x: e.pageX, y: e.pageY })
+
+    // console.log('hi', e.screenX)
+    // const annotationWrapper = document.querySelector('.track_anno_wrapper')
+    // annotationWrapper.style['top'] = e.screenY
+
+    // console.log(annotationWrapper.style.top, e.screenY)
   }
 
   const trackIsValid = !!trackData.track
@@ -191,6 +199,7 @@ function TrackPage() {
       </div>
   }
 
+  const fakeY = 500
   return (
     <>
       {(isLoaded && trackIsValid) && (
@@ -221,7 +230,7 @@ function TrackPage() {
           <div className='track_lyric_anno_wrapper'>
             <div className='track_lyric_wrapper' onMouseUp={highlightLyric} onClick={retrieveAnnotation}>
             </div>
-            <div className='track_anno_wrapper'>
+            <div className='track_anno_wrapper' style={{ top: mousePosition.y - 400 }}>
               {activeAnnotation}
             </div>
           </div>
