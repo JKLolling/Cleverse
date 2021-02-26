@@ -11,6 +11,8 @@ function TrackPage() {
   const [lyrics, setLyrics] = useState('')
   const [annotations, setAnnotations] = useState({})
   const [activeAnnotation, setActiveAnnotation] = useState('')
+  const [defaultAnnotation, setDefaultAnnotation] = useState('')
+  const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   const history = useHistory()
@@ -44,7 +46,7 @@ function TrackPage() {
     }
   }, [isLoaded])
 
-  // Retrieve the lyrics and set the lyrics stat
+  // Retrieve the lyrics and set the lyrics state
   useEffect(() => {
     if (trackData.track) {
       let temp = (trackData.track.lyrics.split('\n'))
@@ -54,7 +56,6 @@ function TrackPage() {
       setLyrics(temp)
     }
   }, [isLoaded])
-
 
   // Add existing annotations to the page
   useEffect(() => {
@@ -66,10 +67,13 @@ function TrackPage() {
       // Get the start and end indices for every lyric that is annotated
       for (let i = 0; i < annotations.length; i++) {
         let annotatedLyric = annotations[i].lyric
+
+        // Set the default annotation
         if (!annotatedLyric) {
           let temp = annotations[i].annotation
           temp = temp.replaceAll('          ', '')
           temp = temp.replaceAll('        ', '')
+          setDefaultAnnotation(temp)
           setActiveAnnotation(temp)
           continue
         }
@@ -120,6 +124,13 @@ function TrackPage() {
     }
   }, [lyrics, isLoaded])
 
+
+  useEffect(() => {
+    if (trackData.track && isLoaded) {
+      displayDefaultAnnotation()
+    }
+  }, [isLoaded])
+
   const highlightLyric = () => {
     const selection = window.getSelection()
     let start = selection.anchorNode
@@ -157,11 +168,21 @@ function TrackPage() {
     }
   }
 
+  const displayDefaultAnnotation = () => {
+    const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
+    wrapper.classList.add('display')
+    setannotationPosition({ x: 0, y: 0 })
+    setMousePosition({ x: 0, y: 10000 })
+    setActiveAnnotation(defaultAnnotation)
+  }
+
   const retrieveAnnotation = (e) => {
     e.stopPropagation()
     const lyric = e.target.innerText
     const annotationObj = annotations[lyric]
-    if (!annotationObj) return
+    if (!annotationObj) {
+      return displayDefaultAnnotation()
+    }
 
     let annotation = annotationObj.annotation
 
@@ -172,16 +193,25 @@ function TrackPage() {
     setActiveAnnotation(annotation)
 
     let yPosition = window.pageYOffset || document.documentElement.scrollTop;
-    yPosition -= 250
+    yPosition -= 300
     if (yPosition < 0) yPosition = 0
 
 
-    // Very very very slapdash fix to annotations going past lryics. I will rework this
-    // if (yPosition >= document.body.scrollHeight - 80) {
-    //   yPosition -= 80
-    // }
+    let temp = (e.clientY - 1000)
+    let offset = window.pageYOffset || document.documentElement.scrollTop;
 
-    setMousePosition({ x: 0, y: yPosition })
+    if (offset <= 300) {
+      temp = temp - 300 + offset
+    }
+
+    setMousePosition({ x: 0, y: temp })
+    setannotationPosition({ x: 0, y: yPosition })
+
+    const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
+    wrapper.classList.remove('display')
+    setTimeout(() => {
+      wrapper.classList.add('display')
+    }, 1);
   }
 
   const trackIsValid = !!trackData.track
@@ -234,8 +264,14 @@ function TrackPage() {
           <div className='track_lyric_anno_wrapper'>
             <div className='track_lyric_wrapper' onMouseUp={highlightLyric} onClick={retrieveAnnotation}>
             </div>
-            <div className='track_anno_wrapper' style={{ top: mousePosition.y }}>
-              {activeAnnotation}
+            <div className='track_anno_wrapper' style={{ top: annotationPosition.y }}>
+              <div className='anno_arrow_wrapper'>
+                <img src='/images/arrow.png' className='anno_arrow' style={{ top: mousePosition.y }} />
+              </div>
+              <div className='annotation'>
+                <div className='annotation_header'>Cleverse Annotation:</div>
+                {activeAnnotation}
+              </div>
             </div>
           </div>
         </div >
