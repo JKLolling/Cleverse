@@ -170,13 +170,18 @@ function TrackPage() {
     annotation.trimLeft()
 
     setActiveAnnotation(annotation)
-    setMousePosition({ x: e.pageX, y: e.pageY })
 
-    // console.log('hi', e.screenX)
-    // const annotationWrapper = document.querySelector('.track_anno_wrapper')
-    // annotationWrapper.style['top'] = e.screenY
+    let yPosition = window.pageYOffset || document.documentElement.scrollTop;
+    yPosition -= 250
+    if (yPosition < 0) yPosition = 0
 
-    // console.log(annotationWrapper.style.top, e.screenY)
+
+    // Very very very slapdash fix to annotations going past lryics. I will rework this
+    // if (yPosition >= document.body.scrollHeight - 80) {
+    //   yPosition -= 80
+    // }
+
+    setMousePosition({ x: 0, y: yPosition })
   }
 
   const trackIsValid = !!trackData.track
@@ -199,7 +204,6 @@ function TrackPage() {
       </div>
   }
 
-  const fakeY = 500
   return (
     <>
       {(isLoaded && trackIsValid) && (
@@ -230,7 +234,7 @@ function TrackPage() {
           <div className='track_lyric_anno_wrapper'>
             <div className='track_lyric_wrapper' onMouseUp={highlightLyric} onClick={retrieveAnnotation}>
             </div>
-            <div className='track_anno_wrapper' style={{ top: mousePosition.y - 400 }}>
+            <div className='track_anno_wrapper' style={{ top: mousePosition.y }}>
               {activeAnnotation}
             </div>
           </div>
@@ -242,3 +246,6 @@ function TrackPage() {
 }
 
 export default TrackPage
+
+
+// {{ top: mousePosition.y - 400 }}

@@ -82,6 +82,8 @@
   background-color: white;
 
   display: flex;
+
+  height: auto;
 }
 
 .track_lyric_wrapper {
@@ -112,7 +114,7 @@
   line-height: 1.7em;
 
   width: 970px;
-  min-height: 100vh;
+  height: fit-content;
   margin: 0 auto;
 
   background-color: white;
@@ -127,7 +129,7 @@
 
 .highlight {
   background-color: #dddddd;
-  padding: 4px 0;
+  padding: 4px 2px;
 }
 .highlight:hover{
   background-color:  #ffff64;
