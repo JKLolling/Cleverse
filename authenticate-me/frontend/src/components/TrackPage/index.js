@@ -12,6 +12,7 @@ function TrackPage() {
   const [annotations, setAnnotations] = useState({})
   const [activeAnnotation, setActiveAnnotation] = useState('')
   const [defaultAnnotation, setDefaultAnnotation] = useState('')
+  const [annotationCoordinates, setAnnotationCoordinates] = useState([])
   const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
@@ -57,6 +58,13 @@ function TrackPage() {
     }
   }, [isLoaded])
 
+
+
+  const makeLyricActive = (e) => {
+    console.log('hi')
+    e.target.classList.add('active')
+    console.log(e.target)
+  }
   // Add existing annotations to the page
   useEffect(() => {
     if (trackData.track && isLoaded) {
@@ -99,18 +107,24 @@ function TrackPage() {
           }
         }
       }
-
       coordinateArray.sort((a, b) => {
         if (a[0] > b[0]) return -1
         return 1
       })
 
-      // Wrap all the annotated lyrics in individual spans
+      setAnnotationCoordinates(coordinateArray)
+      setAnnotations(annotationsObj)
+    }
+  }, [lyrics, isLoaded])
+
+  useEffect(() => {
+    // Wrap all the annotated lyrics in individual spans
+    if (isLoaded && annotationCoordinates.length > 0) {
       let node = document.getElementsByClassName('track_lyric_wrapper')[0]
       let textNode = document.createTextNode(lyrics)
       node.appendChild(textNode)
 
-      coordinateArray.forEach(value => {
+      annotationCoordinates.forEach(value => {
         let range = document.createRange()
         range.setStart(textNode, value[0])
         range.setEnd(textNode, value[1])
@@ -118,12 +132,14 @@ function TrackPage() {
         const span = document.createElement('span')
         span.addEventListener('click', retrieveAnnotation)
         span.classList.add('highlight')
+
+        if (range.toString() === activeAnnotation) {
+          console.log('yess')
+        }
         range.surroundContents(span)
       })
-      setAnnotations(annotationsObj)
     }
-  }, [lyrics, isLoaded])
-
+  }, [annotationCoordinates, isLoaded])
 
   useEffect(() => {
     if (trackData.track && isLoaded) {
@@ -179,10 +195,17 @@ function TrackPage() {
   const retrieveAnnotation = (e) => {
     e.stopPropagation()
     const lyric = e.target.innerText
+
     const annotationObj = annotations[lyric]
     if (!annotationObj) {
       return displayDefaultAnnotation()
     }
+
+    let oldActive = e.target.parentElement.querySelector('.active')
+    if (oldActive)
+      oldActive.classList.remove('active')
+
+    e.target.classList.add('active')
 
     let annotation = annotationObj.annotation
 
@@ -196,8 +219,7 @@ function TrackPage() {
     yPosition -= 300
     if (yPosition < 0) yPosition = 0
 
-
-    let temp = (e.clientY - 1000)
+    let temp = (e.clientY - 975)
     let offset = window.pageYOffset || document.documentElement.scrollTop;
 
     if (offset <= 300) {
@@ -207,6 +229,8 @@ function TrackPage() {
     setMousePosition({ x: 0, y: temp })
     setannotationPosition({ x: 0, y: yPosition })
 
+
+    // The css slide transition
     const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
     wrapper.classList.remove('display')
     setTimeout(() => {
@@ -233,6 +257,7 @@ function TrackPage() {
         </span>
       </div>
   }
+
 
   return (
     <>

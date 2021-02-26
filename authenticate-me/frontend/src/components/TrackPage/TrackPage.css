@@ -180,6 +180,9 @@
   background-color:  #ffff64;
   cursor: pointer;
 }
+.active {
+  background-color:  #ffff64;
+}
 .highlight-yellow {
   background-color: pink;
   padding: 3px 0px 3px 0px;
