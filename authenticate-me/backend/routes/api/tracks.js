@@ -18,4 +18,22 @@ router.get('/', asyncHandler(async (req, res) => {
   res.json({ tracks })
 }))
 
+router.post('/annotations/:trackId', asyncHandler(async (req, res) => {
+  const {
+    annotation,
+    lyric,
+    userId,
+    trackId
+  } = req.body
+
+  const newAnnotation = await Annotation.create({
+    annotation,
+    lyric,
+    userId,
+    trackId
+  })
+
+  res.json(newAnnotation)
+}))
+
 module.exports = router

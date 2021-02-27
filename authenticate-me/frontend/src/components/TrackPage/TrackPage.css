@@ -188,6 +188,9 @@
   padding: 3px 0px 3px 0px;
 }
 
+.hidden {
+  display: none;
+}
 
 /* @font-face {
   font-family: 'Programme Bold';

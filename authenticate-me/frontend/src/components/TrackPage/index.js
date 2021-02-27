@@ -16,6 +16,9 @@ function TrackPage() {
   const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
+  const [newAnnotation, setNewAnnotation] = useState('')
+  const [highlightedText, setHighlightedText] = useState('')
+
   const history = useHistory()
   const dispatch = useDispatch()
   const id = useParams().trackId
@@ -58,13 +61,6 @@ function TrackPage() {
     }
   }, [isLoaded])
 
-
-
-  const makeLyricActive = (e) => {
-    console.log('hi')
-    e.target.classList.add('active')
-    console.log(e.target)
-  }
   // Add existing annotations to the page
   useEffect(() => {
     if (trackData.track && isLoaded) {
@@ -147,14 +143,16 @@ function TrackPage() {
     }
   }, [isLoaded])
 
-  const highlightLyric = () => {
+  const highlightLyric = (e) => {
     const selection = window.getSelection()
     let start = selection.anchorNode
     let startOffset = selection.anchorOffset
     let end = selection.focusNode
     let endOffset = selection.focusOffset
 
-    if (startOffset === endOffset) return
+    if (startOffset === endOffset) {
+      return retrieveAnnotation(e)
+    }
 
     if (startOffset > endOffset) {
       let temp = [start, startOffset]
@@ -176,11 +174,42 @@ function TrackPage() {
     selection.addRange(range)
 
     const span = document.createElement('span')
-    span.classList.add('highlight-yellow')
+    span.classList.add('active')
     try {
       range.surroundContents(span)
     } catch (error) {
       // console.log('Can\'t wrap an existing annotation')
+    }
+
+    setHighlightedText(range.toString())
+
+    let form = document.getElementsByClassName('new_annotation_form')[0]
+    form.classList.remove('hidden')
+
+    let header = document.getElementsByClassName('annotation_header')[0]
+    header.classList.add('hidden')
+
+    let contents = document.getElementsByClassName('annotation_contents')[0]
+    contents.classList.add('hidden')
+
+    let oldActive = document.querySelector('.active')
+    if (oldActive)
+      oldActive.classList.remove('active')
+
+    setAnnotationWrapper(e)
+  }
+
+  const submitNewAnnotation = (e) => {
+    e.preventDefault()
+
+    if (!!newAnnotation?.length) {
+      let data = {
+        annotation: newAnnotation,
+        lyric: highlightedText,
+        userId: 52,
+        trackId: trackData.track.id
+      }
+      dispatch(trackActions.asyncSaveAnnotation(data))
     }
   }
 
@@ -190,10 +219,37 @@ function TrackPage() {
     setannotationPosition({ x: 0, y: 0 })
     setMousePosition({ x: 0, y: 10000 })
     setActiveAnnotation(defaultAnnotation)
+
+    let form = document.getElementsByClassName('new_annotation_form')[0]
+    form.classList.add('hidden')
+
+    let header = document.getElementsByClassName('annotation_header')[0]
+    header.classList.remove('hidden')
+
+    let contents = document.getElementsByClassName('annotation_contents')[0]
+    contents.classList.remove('hidden')
+
+    let oldActive = document.querySelector('.active')
+    if (oldActive)
+      oldActive.classList.remove('active')
   }
 
+
+  useEffect(() => {
+
+  })
   const retrieveAnnotation = (e) => {
     e.stopPropagation()
+
+    let form = document.getElementsByClassName('new_annotation_form')[0]
+    form.classList.add('hidden')
+
+    let header = document.getElementsByClassName('annotation_header')[0]
+    header.classList.remove('hidden')
+
+    let contents = document.getElementsByClassName('annotation_contents')[0]
+    contents.classList.remove('hidden')
+
     const lyric = e.target.innerText
 
     const annotationObj = annotations[lyric]
@@ -214,7 +270,10 @@ function TrackPage() {
     annotation.trimLeft()
 
     setActiveAnnotation(annotation)
+    setAnnotationWrapper(e)
+  }
 
+  const setAnnotationWrapper = (e) => {
     let yPosition = window.pageYOffset || document.documentElement.scrollTop;
     yPosition -= 300
     if (yPosition < 0) yPosition = 0
@@ -287,7 +346,7 @@ function TrackPage() {
             </div>
           </div>
           <div className='track_lyric_anno_wrapper'>
-            <div className='track_lyric_wrapper' onMouseUp={highlightLyric} onClick={retrieveAnnotation}>
+            <div className='track_lyric_wrapper' onMouseUp={highlightLyric} >
             </div>
             <div className='track_anno_wrapper' style={{ top: annotationPosition.y }}>
               <div className='anno_arrow_wrapper'>
@@ -295,7 +354,27 @@ function TrackPage() {
               </div>
               <div className='annotation'>
                 <div className='annotation_header'>Cleverse Annotation:</div>
-                {activeAnnotation}
+                <div className='annotation_contents'>
+                  {activeAnnotation}
+                </div>
+                <div className='new_annotation_form hidden'>
+                  <form
+                    value={newAnnotation}
+                    onSubmit={submitNewAnnotation}>
+                    <div>
+                      <textarea
+                        defaultValue='Drop some sweet knowledge bombs'
+                        onChange={e => {
+                          setNewAnnotation(e.target.value)
+                          // console.log(e.target.value)
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <button type='submit'>Save</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
