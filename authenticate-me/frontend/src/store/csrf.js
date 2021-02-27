@@ -15,9 +15,6 @@ export async function csrfFetch(url, options = {}) {
       options.headers['Content-Type'] || 'application/json';
     options.headers['XSRF-Token'] = Cookies.get('XSRF-TOKEN');
   }
-
-  console.log(url, options)
-
   // call the default window's fetch with the url and the options passed in
   const res = await window.fetch(url, options); //window.fetch === fetch. Same thing
 

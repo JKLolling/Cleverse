@@ -12,6 +12,7 @@ function TrackPage() {
   const [annotations, setAnnotations] = useState({})
   const [activeAnnotation, setActiveAnnotation] = useState('')
   const [defaultAnnotation, setDefaultAnnotation] = useState('')
+
   const [annotationCoordinates, setAnnotationCoordinates] = useState([])
   const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -25,7 +26,7 @@ function TrackPage() {
   const trackData = useSelector(state => state.track)
   const colorThief = new ColorThief()
 
-  // Get lyrics from the store
+  // Get lyrics from the database
   useEffect(() => {
     dispatch(trackActions.asyncFetchTrack(id))
       .then(() => setIsLoaded(true))
@@ -50,7 +51,7 @@ function TrackPage() {
     }
   }, [isLoaded])
 
-  // Retrieve the lyrics and set the lyrics state
+  // Retrieve the lyrics from our store variable and set the local state
   useEffect(() => {
     if (trackData.track) {
       let temp = (trackData.track.lyrics.split('\n'))
@@ -61,34 +62,45 @@ function TrackPage() {
     }
   }, [isLoaded])
 
-  // Add existing annotations to the page
-  useEffect(() => {
-    if (trackData.track && isLoaded) {
-      let annotations = trackData.track.Annotations
+
+  const localState = Object.keys(annotations).length + 1
+  // console.log('local', localState)
+  // console.log('directly from the store', trackData?.track?.Annotations)
+  // console.log(trackData?.track?.Annotations.length)
+
+  // Calculate where the existing annotations should go
+  const createAnnotationCoordinates = () => {
+    if (trackData?.track?.Annotations) {
+
+      let storeAnnotations = trackData.track.Annotations
       const coordinateArray = []
       const annotationsObj = {}
 
       // Get the start and end indices for every lyric that is annotated
-      for (let i = 0; i < annotations.length; i++) {
-        let annotatedLyric = annotations[i].lyric
+      for (let i = 0; i < storeAnnotations.length; i++) {
+        let annotatedLyric = storeAnnotations[i].lyric
 
         // Set the default annotation
         if (!annotatedLyric) {
-          let temp = annotations[i].annotation
-          temp = temp.replaceAll('          ', '')
-          temp = temp.replaceAll('        ', '')
-          setDefaultAnnotation(temp)
-          setActiveAnnotation(temp)
+
+          let defaultAnnotation = storeAnnotations[i].annotation
+          defaultAnnotation = defaultAnnotation.replaceAll('          ', '')
+          defaultAnnotation = defaultAnnotation.replaceAll('        ', '')
+          setDefaultAnnotation(defaultAnnotation)
+          setActiveAnnotation(defaultAnnotation)
           continue
+        } else {
+
         }
 
+        // Just helps formatting the seed values
         annotatedLyric = annotatedLyric.replaceAll('          ', '')
         annotatedLyric = annotatedLyric.replaceAll('        ', '')
 
         // Link the actual annotations to their lyrics through an object
-        annotationsObj[annotatedLyric] = annotations[i]
+        annotationsObj[annotatedLyric] = storeAnnotations[i]
 
-        // If the lyric occurs multiple times, add the same annotatedLyric to the applicable lines
+        // Adds multiple start/end coordinates if the lyric shows up multiple times
         let index = 0
         while (index > -1) {
           let start = lyrics.indexOf(annotatedLyric, index)
@@ -103,6 +115,7 @@ function TrackPage() {
           }
         }
       }
+
       coordinateArray.sort((a, b) => {
         if (a[0] > b[0]) return -1
         return 1
@@ -110,13 +123,27 @@ function TrackPage() {
 
       setAnnotationCoordinates(coordinateArray)
       setAnnotations(annotationsObj)
+
+      // console.log('store annotations', Object.values(storeAnnotations).map(obj => obj.lyric))
     }
-  }, [lyrics, isLoaded])
+  }
+  if (localState != trackData?.track?.Annotations.length) {
+    createAnnotationCoordinates()
+  }
 
   useEffect(() => {
-    // Wrap all the annotated lyrics in individual spans
+    createAnnotationCoordinates()
+  }, [lyrics, isLoaded])
+
+  // Wrap each annotated lyric in a span.
+  const wrapAnnotations = () => {
     if (isLoaded && annotationCoordinates.length > 0) {
       let node = document.getElementsByClassName('track_lyric_wrapper')[0]
+
+      while (node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
+
       let textNode = document.createTextNode(lyrics)
       node.appendChild(textNode)
 
@@ -129,14 +156,16 @@ function TrackPage() {
         span.addEventListener('click', retrieveAnnotation)
         span.classList.add('highlight')
 
-        if (range.toString() === activeAnnotation) {
-          console.log('yess')
-        }
         range.surroundContents(span)
       })
     }
-  }, [annotationCoordinates, isLoaded])
+  }
+  useEffect(() => {
+    wrapAnnotations()
+  }, [annotationCoordinates, isLoaded, annotations])
 
+
+  // Load the default annotation at the beginning
   useEffect(() => {
     if (trackData.track && isLoaded) {
       displayDefaultAnnotation()
@@ -199,7 +228,7 @@ function TrackPage() {
     setAnnotationWrapper(e)
   }
 
-  const submitNewAnnotation = (e) => {
+  const submitNewAnnotation = async (e) => {
     e.preventDefault()
 
     if (!!newAnnotation?.length) {
@@ -209,7 +238,7 @@ function TrackPage() {
         userId: 52,
         trackId: trackData.track.id
       }
-      dispatch(trackActions.asyncSaveAnnotation(data))
+      const res = await dispatch(trackActions.asyncSaveAnnotation(data))
     }
   }
 
@@ -234,10 +263,6 @@ function TrackPage() {
       oldActive.classList.remove('active')
   }
 
-
-  useEffect(() => {
-
-  })
   const retrieveAnnotation = (e) => {
     e.stopPropagation()
 
@@ -364,9 +389,8 @@ function TrackPage() {
                     <div>
                       <textarea
                         defaultValue='Drop some sweet knowledge bombs'
-                        onChange={e => {
+                        onBlur={e => {
                           setNewAnnotation(e.target.value)
-                          // console.log(e.target.value)
                         }}
                       />
                     </div>

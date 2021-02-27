@@ -45,9 +45,7 @@ export const asyncSaveAnnotation = (annotationData) => async (dispatch) => {
   return data
 }
 
-
 export const asyncFetchTrack = (trackId) => async (dispatch) => {
-  console.log('hi')
   let found = true
   const res = await csrfFetch(`/api/tracks/${trackId}`)
     .catch(err => {
@@ -60,7 +58,6 @@ export const asyncFetchTrack = (trackId) => async (dispatch) => {
   } else {
     data = { track: null }
   }
-  // console.log(data.track.Annotations)
   dispatch(getTrack(data))
   return data
 }
