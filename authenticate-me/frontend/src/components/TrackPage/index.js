@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory, useParams, NavLink } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import ColorThief from 'colorthief'
 import * as trackActions from '../../store/track'
 import PageNotFound from '../PageNotFound'
@@ -20,7 +20,6 @@ function TrackPage() {
   const [newAnnotation, setNewAnnotation] = useState('')
   const [highlightedText, setHighlightedText] = useState('')
 
-  const history = useHistory()
   const dispatch = useDispatch()
   const id = useParams().trackId
   const trackData = useSelector(state => state.track)
@@ -71,7 +70,6 @@ function TrackPage() {
   // Calculate where the existing annotations should go
   const createAnnotationCoordinates = () => {
     if (trackData?.track?.Annotations) {
-
       let storeAnnotations = trackData.track.Annotations
       const coordinateArray = []
       const annotationsObj = {}
@@ -116,6 +114,43 @@ function TrackPage() {
         }
       }
 
+      const highlightedTextCoordinates = []
+      if (highlightedText) {
+        let index = 0
+        while (index > -1) {
+          let start = lyrics.indexOf(highlightedText, index)
+          let end = start + highlightedText.length
+
+          // If we actually find the lyric, start searching from the last found location (end) and push the coordinates to the coordinateArray
+          if (start > -1) {
+            highlightedTextCoordinates.push([start, end])
+            index = end
+          } else {
+            index = -1
+          }
+        }
+
+        highlightedTextCoordinates.forEach(highlighted_tuple => {
+          let safeToAdd = true
+          coordinateArray.forEach(annotation_tuple => {
+            if (highlighted_tuple[0] >= annotation_tuple[0] && highlighted_tuple[1] <= annotation_tuple[1]) {
+              // don't add it cuz it's inside something that's already annotated
+              safeToAdd = false
+            }
+            else if (highlighted_tuple[0] <= annotation_tuple[0] && highlighted_tuple[1] >= annotation_tuple[1]) {
+              // don't add it cuz it's wrapping something that's already annotated
+              safeToAdd = false
+            }
+          })
+          if (safeToAdd) coordinateArray.push(highlighted_tuple)
+        })
+
+
+        // let start = lyrics.indexOf(highlightedText)
+        // let end = start + highlightedText.length
+        // coordinateArray.push([start, end])
+      }
+
       coordinateArray.sort((a, b) => {
         if (a[0] > b[0]) return -1
         return 1
@@ -127,15 +162,14 @@ function TrackPage() {
       // console.log('store annotations', Object.values(storeAnnotations).map(obj => obj.lyric))
     }
   }
+  useEffect(() => {
+    createAnnotationCoordinates()
+  }, [lyrics, highlightedText])
   if (localState != trackData?.track?.Annotations.length) {
     createAnnotationCoordinates()
   }
 
-  useEffect(() => {
-    createAnnotationCoordinates()
-  }, [lyrics, isLoaded])
-
-  // Wrap each annotated lyric in a span.
+  // Wrap each annotated lyric in a span (aka highlight that lyric)
   const wrapAnnotations = () => {
     if (isLoaded && annotationCoordinates.length > 0) {
       let node = document.getElementsByClassName('track_lyric_wrapper')[0]
@@ -147,23 +181,33 @@ function TrackPage() {
       let textNode = document.createTextNode(lyrics)
       node.appendChild(textNode)
 
+      // console.log(annotationCoordinates)
       annotationCoordinates.forEach(value => {
-        let range = document.createRange()
-        range.setStart(textNode, value[0])
-        range.setEnd(textNode, value[1])
+        try {
+          let range = document.createRange()
+          range.setStart(textNode, value[0])
+          range.setEnd(textNode, value[1])
 
-        const span = document.createElement('span')
-        span.addEventListener('click', retrieveAnnotation)
-        span.classList.add('highlight')
+          const span = document.createElement('span')
 
-        range.surroundContents(span)
+          if (range.toString() === highlightedText) {
+            span.classList.add('active')
+          } else {
+            span.addEventListener('click', retrieveAnnotation)
+            span.classList.add('highlight')
+          }
+
+          range.surroundContents(span)
+
+        } catch (error) {
+
+        }
       })
     }
   }
   useEffect(() => {
     wrapAnnotations()
-  }, [annotationCoordinates, isLoaded, annotations])
-
+  }, [annotationCoordinates])
 
   // Load the default annotation at the beginning
   useEffect(() => {
@@ -174,6 +218,7 @@ function TrackPage() {
 
   const highlightLyric = (e) => {
     const selection = window.getSelection()
+
     let start = selection.anchorNode
     let startOffset = selection.anchorOffset
     let end = selection.focusNode
@@ -191,8 +236,8 @@ function TrackPage() {
       endOffset = temp[1]
     }
 
-    // Check if this lyric has already been annotated or contains lyrics that have been annotated
-    if (start.parentElement.className === 'highlight' || end.parentElement.className === 'highlight') {
+    // Prevents any nesting of sannotations
+    if (start.parentElement.className !== 'track_lyric_wrapper' || end.parentElement.className !== 'track_lyric_wrapper') {
       return
     }
 
@@ -202,16 +247,11 @@ function TrackPage() {
     range.setEnd(end, endOffset)
     selection.addRange(range)
 
-    const span = document.createElement('span')
-    span.classList.add('active')
-    try {
-      range.surroundContents(span)
-    } catch (error) {
-      // console.log('Can\'t wrap an existing annotation')
-    }
 
     setHighlightedText(range.toString())
+    createAnnotationCoordinates()
 
+    // Bring up that annotation form
     let form = document.getElementsByClassName('new_annotation_form')[0]
     form.classList.remove('hidden')
 
@@ -298,6 +338,7 @@ function TrackPage() {
     setAnnotationWrapper(e)
   }
 
+  // Set the position of the box that contains the annotations and retrigger the annomation to bring it into view
   const setAnnotationWrapper = (e) => {
     let yPosition = window.pageYOffset || document.documentElement.scrollTop;
     yPosition -= 300
@@ -312,7 +353,6 @@ function TrackPage() {
 
     setMousePosition({ x: 0, y: temp })
     setannotationPosition({ x: 0, y: yPosition })
-
 
     // The css slide transition
     const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
@@ -410,6 +450,3 @@ function TrackPage() {
 }
 
 export default TrackPage
-
-
-// {{ top: mousePosition.y - 400 }}
