@@ -182,21 +182,59 @@
 }
 .active {
   background-color:  #ffff64;
-}
-.highlight-yellow {
-  background-color: pink;
-  padding: 3px 0px 3px 0px;
+  padding: 4px 2px;
 }
 
 .hidden {
   display: none;
 }
 
-/* @font-face {
-  font-family: 'Programme Bold';
-  src: url('./fonts/Programme/WOFF/Programme-Bold.woff') format('woff')
-  url('./fonts/Programme/WOFF2/Programme-Bold.woff2') format('woff2')
-} */
+.new_annotation_form_innerDiv {
+  box-sizing: border-box;
+  margin-top: 50px;
+}
+
+.new_annotation_input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 200px;
+  resize: none;
+
+  background-color: rgba(204,204,204,.35);
+  border: 0;
+
+  font-family: 'Programme Light';
+  font-size: 1em;
+  color: grey;
+
+  padding: 20px;
+}
+
+.new_annotation_button {
+  box-sizing: border-box;
+  padding: 5px;
+  margin-top: 10px;
+
+  font-size: 1em;
+
+  color: #0ecb27;
+  background-color: white;
+  border: 2px solid #0ecb27;
+  cursor: pointer;
+}
+
+.new_annotation_button:hover {
+  background-color: #c8ffd0
+}
+
+.new_annotation_errors {
+  color: #5b72e6;
+  z-index: 1;
+
+  list-style-type: none;
+  padding-left: 0;
+}
+
 
 @font-face {
   font-family: 'Programme Light';

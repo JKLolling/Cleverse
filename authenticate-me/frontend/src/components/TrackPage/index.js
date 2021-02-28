@@ -11,7 +11,7 @@ function TrackPage() {
   const [lyrics, setLyrics] = useState('')
   const [annotations, setAnnotations] = useState({})
   const [activeAnnotation, setActiveAnnotation] = useState('')
-  const [defaultAnnotation, setDefaultAnnotation] = useState('Looks like this track doesn\'t have any annotations. Add some of your own!')
+  const [defaultAnnotation, setDefaultAnnotation] = useState('Looks like this track doesn\'t have a default annotation')
 
   const [annotationCoordinates, setAnnotationCoordinates] = useState([])
   const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
@@ -22,13 +22,13 @@ function TrackPage() {
 
   const [numAnnotations, setNumAnnotations] = useState(0)
 
+  const [errors, setErrors] = useState([])
+
   const dispatch = useDispatch()
   const id = useParams().trackId
   const trackData = useSelector(state => state.track)
   const sessionUser = useSelector(state => state.session.user);
   const colorThief = new ColorThief()
-
-
 
   // Get lyrics from the database
   useEffect(() => {
@@ -67,7 +67,6 @@ function TrackPage() {
   }, [isLoaded])
 
 
-  const localState = Object.keys(annotations).length + 1
   // console.log('local', localState)
   // console.log('store', trackData?.track?.Annotations?.length)
 
@@ -164,12 +163,8 @@ function TrackPage() {
   useEffect(() => {
     createAnnotationCoordinates()
   }, [lyrics, highlightedText, numAnnotations])
-  if (localState < trackData?.track?.Annotations.length) {
-    createAnnotationCoordinates()
-  }
   if (trackData?.track?.Annotations?.length && numAnnotations !== trackData.track.Annotations.length) {
     setNumAnnotations(trackData.track.Annotations.length)
-    console.log(trackData.track.Annotations.length)
     createAnnotationCoordinates()
   }
 
@@ -266,8 +261,10 @@ function TrackPage() {
       contents.classList.add('hidden')
 
       let oldActive = document.querySelector('.active')
-      if (oldActive)
+      while (oldActive) {
         oldActive.classList.remove('active')
+        oldActive = document.querySelector('.active')
+      }
     } else {
       setActiveAnnotation('Please sign in to annotate')
     }
@@ -278,7 +275,16 @@ function TrackPage() {
   const submitNewAnnotation = async (e) => {
     e.preventDefault()
 
-    if (!!newAnnotation?.length) {
+    e.target.value = 'hello'
+
+    const newErrors = []
+    if (!highlightedText.length) {
+      newErrors.push('You must highlight a lyric to annotate')
+    } else if (!newAnnotation?.length) {
+      newErrors.push('You cannot submit an empty annotation')
+    }
+    else {
+      setErrors([])
       let data = {
         annotation: newAnnotation,
         lyric: highlightedText,
@@ -287,6 +293,17 @@ function TrackPage() {
       }
       const res = await dispatch(trackActions.asyncSaveAnnotation(data))
     }
+    setErrors(newErrors)
+    setActiveAnnotation(newAnnotation)
+
+    let form = document.getElementsByClassName('new_annotation_form')[0]
+    form.classList.add('hidden')
+
+    let header = document.getElementsByClassName('annotation_header')[0]
+    header.classList.remove('hidden')
+
+    let contents = document.getElementsByClassName('annotation_contents')[0]
+    contents.classList.remove('hidden')
 
     setHighlightedText('')
   }
@@ -313,8 +330,10 @@ function TrackPage() {
     contents.classList.remove('hidden')
 
     let oldActive = document.querySelector('.active')
-    if (oldActive)
+    while (oldActive) {
       oldActive.classList.remove('active')
+      oldActive = document.querySelector('.active')
+    }
   }
 
   const retrieveAnnotation = (e) => {
@@ -337,10 +356,20 @@ function TrackPage() {
     }
 
     let oldActive = e.target.parentElement.querySelector('.active')
-    if (oldActive)
+    while (oldActive) {
       oldActive.classList.remove('active')
+      oldActive = e.target.parentElement.querySelector('.active')
+    }
 
     e.target.classList.add('active')
+
+    let children = e.target.parentElement.children
+    for (let index = 0; index < children.length; index++) {
+      if (children[index].innerText === e.target.innerText) {
+        children[index].classList.add('active')
+      }
+    }
+
 
     let annotation = annotationObj.annotation
 
@@ -397,6 +426,8 @@ function TrackPage() {
   }
 
 
+
+
   return (
     <>
       {(isLoaded && trackIsValid) && (
@@ -439,17 +470,27 @@ function TrackPage() {
                 <div className='new_annotation_form hidden'>
                   <form
                     value={newAnnotation}
-                    onSubmit={submitNewAnnotation}>
-                    <div>
+                    onSubmit={submitNewAnnotation}
+                    className='new_annotation_form_innerDiv'>
+                    <ul className='new_annotation_errors'>
+                      {errors.map((error, idx) => <li key={idx}>{error}</li>)}
+                    </ul>
+                    <div >
                       <textarea
+                        className='new_annotation_input'
                         defaultValue='Drop some sweet knowledge bombs'
                         onBlur={e => {
                           setNewAnnotation(e.target.value)
+                          e.target.value = 'Drop some sweet knowledge bombs'
                         }}
+                        onFocus={e => e.target.value = ''}
                       />
                     </div>
                     <div>
-                      <button type='submit'>Save</button>
+                      <button
+                        type='submit'
+                        className='new_annotation_button'
+                      >Save</button>
                     </div>
                   </form>
                 </div>
