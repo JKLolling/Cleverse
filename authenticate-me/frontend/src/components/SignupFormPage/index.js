@@ -112,7 +112,7 @@ function SignupFormPage() {
           </div>
           <div>
             Don't want an account?
-            <NavLink to='/' className='signup_nav-to-signin' onClick={loginAsDemo}>
+            <NavLink to='/' className='signup_nav-to-signin' activeClassName='selected' onClick={loginAsDemo}>
               Login as a Demo User
             </NavLink>
           </div>
