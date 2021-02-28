@@ -13,6 +13,7 @@ module.exports = {
         seedGenerated: true,
       })
     }
+    fakePeople.push({ username: 'CoolCat42', email: 'demo@demo.com', hashedPassword: bcrypt.hashSync('password'), seedGenerated: true })
     return queryInterface.bulkInsert('Users', fakePeople, {});
   },
 

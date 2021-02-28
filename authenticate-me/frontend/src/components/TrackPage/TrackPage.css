@@ -82,6 +82,10 @@
   background-color: white;
 
   display: flex;
+
+  height: auto;
+
+  overflow-y: hidden;
 }
 
 .track_lyric_wrapper {
@@ -108,39 +112,129 @@
 
   white-space: pre-wrap;
 
-  font-size: 1.15em;
-  line-height: 1.7em;
-
   width: 970px;
-  min-height: 100vh;
+  height: fit-content;
+  max-height: 500px;
   margin: 0 auto;
 
   background-color: white;
 
   padding: 15px;
+
+  position: relative;
+  top: 0;
+  right: -1000px;
+
+  display: flex;
+}
+.display {
+  -webkit-transition: .5s;
+  -moz-transition: .5s;
+  -ms-transition: .5s;
+  -o-transition: .5s;
+  transition: .5s;
+  right: 0px !important;
+}
+
+.annotation {
+  display: flex;
+  flex-direction: column;
+
+  font-size: 1em;
+  padding-top: 20px;
+  line-height: 1.5em;
+}
+.annotation_header {
+  padding-bottom: 20px;
+  font-weight: bold;
+}
+
+.anno_arrow_wrapper {
+  overflow-y: hidden;
+  height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: flex-start;
+
+  width: 50px;
+}
+.anno_arrow {
+  position: relative;
+  top: 0px;
+  width: 40px;
+  height: 2000px;
+}
+.annotation {
+  display: flex;
+  justify-content: flex-start;
+  width: 80%;
 }
 
 
 
 .highlight {
   background-color: #dddddd;
-  padding: 4px 0;
+  padding: 4px 2px;
 }
 .highlight:hover{
   background-color:  #ffff64;
   cursor: pointer;
 }
-.highlight-yellow {
-  background-color: pink;
-  padding: 3px 0px 3px 0px;
+.active {
+  background-color:  #ffff64;
+  padding: 4px 2px;
 }
 
+.hidden {
+  display: none;
+}
 
-/* @font-face {
-  font-family: 'Programme Bold';
-  src: url('./fonts/Programme/WOFF/Programme-Bold.woff') format('woff')
-  url('./fonts/Programme/WOFF2/Programme-Bold.woff2') format('woff2')
-} */
+.new_annotation_form_innerDiv {
+  box-sizing: border-box;
+  margin-top: 50px;
+}
+
+.new_annotation_input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 200px;
+  resize: none;
+
+  background-color: rgba(204,204,204,.35);
+  border: 0;
+
+  font-family: 'Programme Light';
+  font-size: 1em;
+  color: grey;
+
+  padding: 20px;
+}
+
+.new_annotation_button {
+  box-sizing: border-box;
+  padding: 5px;
+  margin-top: 10px;
+
+  font-size: 1em;
+
+  color: #0ecb27;
+  background-color: white;
+  border: 2px solid #0ecb27;
+  cursor: pointer;
+}
+
+.new_annotation_button:hover {
+  background-color: #c8ffd0
+}
+
+.new_annotation_errors {
+  color: #5b72e6;
+  z-index: 1;
+
+  list-style-type: none;
+  padding-left: 0;
+}
+
 
 @font-face {
   font-family: 'Programme Light';

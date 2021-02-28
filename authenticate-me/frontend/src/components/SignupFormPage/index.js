@@ -42,6 +42,17 @@ function SignupFormPage() {
     return setErrors(['Confirm Password field must be the same as the Password field']);
   };
 
+
+  const loginAsDemo = () => {
+    setErrors([]);
+    return dispatch(sessionActions.login({ credential: 'CoolCat42', password: 'password' }))
+      .catch(async (res) => {
+        const data = await res.json();
+        console.log(data)
+        if (data && data.errors) setErrors(data.errors);
+      });
+  }
+
   return (
     <div className='signup_wrapper'>
       <div className='signup_title'> SIGN UP! </div>
@@ -97,6 +108,12 @@ function SignupFormPage() {
             Already have an account?
             <NavLink to='/login' className='signup_nav-to-signin'>
               Sign in here
+            </NavLink>
+          </div>
+          <div>
+            Don't want an account?
+            <NavLink to='/' className='signup_nav-to-signin' activeClassName='selected' onClick={loginAsDemo}>
+              Login as a Demo User
             </NavLink>
           </div>
         </form>
