@@ -455,6 +455,7 @@ function TrackPage() {
               </div>
             </div>
           </div>
+
           <div className='track_lyric_anno_wrapper'>
             <div className='track_lyric_wrapper' onMouseUp={highlightLyric} >
             </div>
