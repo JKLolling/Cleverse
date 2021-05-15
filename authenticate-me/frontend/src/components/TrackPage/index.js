@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import ColorThief from 'colorthief'
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux'
 import * as trackActions from '../../store/track'
+
+// Other pages
 import PageNotFound from '../PageNotFound'
+import SongBanner from './SongBanner'
+
+// Styling
 import './TrackPage.css'
 
 function TrackPage() {
@@ -28,32 +34,12 @@ function TrackPage() {
   const id = useParams().trackId
   const trackData = useSelector(state => state.track)
   const sessionUser = useSelector(state => state.session.user);
-  const colorThief = new ColorThief()
 
   // Get lyrics from the database
   useEffect(() => {
     dispatch(trackActions.asyncFetchTrack(id))
       .then(() => setIsLoaded(true))
   }, [dispatch])
-
-  // Color the banner
-  useEffect(() => {
-    if (isLoaded) {
-      let coverImg = document.getElementById('coverPhoto')
-
-      if (coverImg?.complete) {
-        const colors = (colorThief.getPalette(coverImg));
-        const temp = `rgb(${colors[4][0]},${colors[4][1]},${colors[4][2]})`
-        document.body.style.setProperty('--cover-color', temp)
-      } else {
-        coverImg.addEventListener('load', function () {
-          const colors = (colorThief.getPalette(coverImg));
-          const temp = `rgb(${colors[4][0]},${colors[4][1]},${colors[4][2]})`
-          document.body.style.setProperty('--cover-color', temp)
-        });
-      }
-    }
-  }, [isLoaded])
 
   // Retrieve the lyrics from our store variable and set the local state
   useEffect(() => {
@@ -308,11 +294,6 @@ function TrackPage() {
     setHighlightedText('')
   }
 
-  const deleteAnnotation = async (e) => {
-    e.preventDefault()
-    console.log('delete')
-  }
-
   const displayDefaultAnnotation = () => {
     const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
     wrapper.classList.add('display')
@@ -410,52 +391,11 @@ function TrackPage() {
     return <PageNotFound />
   }
 
-  let imgSrc = ''
-  if (isLoaded) {
-    imgSrc = trackData.track.title.split(' ').join('_')
-  }
-
-  let features = <div></div>
-  if (trackData?.track?.featuring) {
-    features =
-      <div>Featuring
-        <span className='banner_data'>
-          {trackData.track.featuring}
-        </span>
-      </div>
-  }
-
-
-
-
   return (
     <>
       {(isLoaded && trackIsValid) && (
         <div>
-          <div className='track_banner'>
-            <div className='track_banner_tint'>
-              <div className='track_banner_totalInfo'>
-                <div className='track_banner_leftInfo'>
-                  <div className='track_banner_leftInfo_img'>
-                    <img src={`/images/seedPhotos/${imgSrc}.jpg`} id='coverPhoto' />
-                  </div>
-                  <div className='track_banner_leftInfo_data'>
-                    <div className='banner_title'>{trackData.track.title}</div>
-                    <div className='banner_band'>{trackData.track.band}</div>
-                    {features}
-                    <div>Album
-                      <span className='banner_data'>
-                        {trackData.track.albumTitle}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className='track_banner_rightInfo'>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          <SongBanner isLoaded={isLoaded}></SongBanner>
           <div className='track_lyric_anno_wrapper'>
             <div className='track_lyric_wrapper' onMouseUp={highlightLyric} >
             </div>

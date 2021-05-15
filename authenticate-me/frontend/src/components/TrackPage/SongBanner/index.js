@@ -1,8 +1,16 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-const SongBanner = () => {
+import ColorThief from 'colorthief'
+
+const SongBanner = ({ isLoaded }) => {
+
+  const colorThief = new ColorThief()
+
+  const trackData = useSelector(state => state.track)
 
   useEffect(() => {
+
     if (isLoaded) {
       let coverImg = document.getElementById('coverPhoto')
 
@@ -20,13 +28,23 @@ const SongBanner = () => {
     }
   }, [isLoaded])
 
+  let features = <div></div>
+  if (trackData?.track?.featuring) {
+    features =
+      <div>Featuring
+        <span className='banner_data'>
+          {trackData.track.featuring}
+        </span>
+      </div>
+  }
+
   return (
     <div className='track_banner'>
       <div className='track_banner_tint'>
         <div className='track_banner_totalInfo'>
           <div className='track_banner_leftInfo'>
             <div className='track_banner_leftInfo_img'>
-              <img src={`/images/seedPhotos/${imgSrc}.jpg`} id='coverPhoto' />
+              <img src={trackData.track.albumCover} id='coverPhoto' />
             </div>
             <div className='track_banner_leftInfo_data'>
               <div className='banner_title'>{trackData.track.title}</div>
