@@ -8,7 +8,7 @@ router.get('/:id(\\d+)', asyncHandler(async (req, res) => {
   const track = await Track.findByPk((req.params.id), {
     include: Annotation
   })
-  res.json({ track })
+  res.json(track)
 }))
 
 router.get('/', asyncHandler(async (req, res) => {

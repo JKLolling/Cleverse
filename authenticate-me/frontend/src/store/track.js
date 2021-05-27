@@ -56,7 +56,8 @@ export const asyncFetchTrack = (trackId) => async (dispatch) => {
   if (found) {
     data = await res.json()
   } else {
-    data = { track: null }
+    // data = { track: null }
+    data = null
   }
   dispatch(getTrack(data))
   return data

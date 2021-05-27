@@ -383,6 +383,18 @@ module.exports = {
       }
     ]
 
+    for (let i = 0; i < defaultAnnos.length; i++) {
+      let temp = defaultAnnos[i].annotation
+      temp = temp.replace(/          /g, '')
+      temp = temp.replace(/        /g, '')
+      defaultAnnos[i].annotation = temp
+
+      temp = defaultAnnos[i].lyric
+      if (!temp) continue
+      temp = temp.replace(/          /g, '')
+      temp = temp.replace(/        /g, '')
+      defaultAnnos[i].lyric = temp
+    }
     return queryInterface.bulkInsert('Annotations', defaultAnnos, {});
   },
 
