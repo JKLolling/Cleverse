@@ -249,9 +249,9 @@ function TrackPage() {
       // let node = document.getElementsByClassName('track_lyric_wrapper')[0]
       let node = lyricRef.current
 
-      // while (node.firstChild) {
-      //   node.removeChild(node.firstChild);
-      // }
+      while (node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
 
       let textNode = document.createTextNode(lyrics)
       node.appendChild(textNode)

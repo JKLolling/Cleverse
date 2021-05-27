@@ -13,6 +13,7 @@ const getTrack = (trackData) => {
 }
 
 const getTrackList = (trackData) => {
+  console.log(trackData)
   return {
     type: GET_TRACKLIST,
     trackData
@@ -29,8 +30,7 @@ const saveAnnotation = (annotationData) => {
 export const asyncFetchTrackList = () => async (dispatch) => {
   const res = await csrfFetch(`/api/tracks/`)
   const data = await res.json()
-
-  dispatch(getTrackList(data.tracks))
+  dispatch(getTrackList(data))
 }
 
 export const asyncSaveAnnotation = (annotationData) => async (dispatch) => {

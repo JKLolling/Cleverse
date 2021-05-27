@@ -424,7 +424,7 @@ module.exports = {
         title: 'Rhinestone Eyes',
         band: 'Gorillaz',
         albumTitle: 'Plastic Beach',
-        albumCover: '/images/seedPhotos/Rhinesone_Eyes.jpg',
+        albumCover: '/images/seedPhotos/Rhinestone_Eyes.jpg',
         seedGenerated: true,
       },
       {

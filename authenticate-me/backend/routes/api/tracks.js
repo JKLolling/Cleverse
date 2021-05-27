@@ -15,7 +15,7 @@ router.get('/', asyncHandler(async (req, res) => {
   const tracks = await Track.findAll({
     limit: 10
   })
-  res.json({ tracks })
+  res.json(tracks)
 }))
 
 router.post('/annotations/:trackId', asyncHandler(async (req, res) => {
