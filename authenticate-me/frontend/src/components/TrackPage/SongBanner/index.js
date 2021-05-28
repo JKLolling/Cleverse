@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import ColorThief from 'colorthief'
 
+// Styling
+import './SongBanner.css'
+
 const SongBanner = ({ isLoaded }) => {
 
   const colorThief = new ColorThief()

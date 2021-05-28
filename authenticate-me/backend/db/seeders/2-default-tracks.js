@@ -674,13 +674,16 @@ module.exports = {
         albumCover: '/images/seedPhotos/Instant_Crush.jpg',
         seedGenerated: true,
       },
-
-
-
-
-
-
     ]
+
+    defaultTracks.forEach(track => {
+      let temp = (track.lyrics.split('\n'))
+      temp = temp.map(string => string.trimLeft())
+      temp = temp.join('\n')
+      track.lyrics = temp
+    })
+
+
     return queryInterface.bulkInsert('Tracks', defaultTracks, {});
   },
 

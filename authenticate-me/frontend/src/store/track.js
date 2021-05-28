@@ -12,14 +12,6 @@ const getTrack = (trackData) => {
   }
 }
 
-const getTrackList = (trackData) => {
-  console.log(trackData)
-  return {
-    type: GET_TRACKLIST,
-    trackData
-  }
-}
-
 const saveAnnotation = (annotationData) => {
   return {
     type: SAVE_ANNOTATION,
@@ -27,11 +19,6 @@ const saveAnnotation = (annotationData) => {
   }
 }
 
-export const asyncFetchTrackList = () => async (dispatch) => {
-  const res = await csrfFetch(`/api/tracks/`)
-  const data = await res.json()
-  dispatch(getTrackList(data))
-}
 
 export const asyncSaveAnnotation = (annotationData) => async (dispatch) => {
   const trackId = annotationData.trackId
@@ -66,10 +53,6 @@ export const asyncFetchTrack = (trackId) => async (dispatch) => {
 const trackReducer = (state = {}, action) => {
   switch (action.type) {
     case GET_TRACK:
-      return {
-        ...action.trackData
-      }
-    case GET_TRACKLIST:
       return {
         ...action.trackData
       }

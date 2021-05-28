@@ -1,77 +1,3 @@
-:root {
-  --cover-color:rgba(10, 10, 10)
-}
-
-.track_banner {
-  background-color: var(--cover-color);
-}
-
-.track_banner_tint {
-  height: 17.4rem;
-  position: relative;
-
-  color: white;
-  background-color: rgba(0,0,0,.6);
-
-  display: flex;
-  justify-content: center;
-}
-
-.track_banner_totalInfo {
-  box-sizing: border-box;
-  padding-top: 30px;
-  padding-bottom: 20px;
-  width: 970px;
-
-  background: rgba(0,0,0,.6);
-
-  display: flex;
-  justify-content: space-between;
-}
-
-.track_banner_leftInfo {
-  width: 58%;
-  display: flex;
-
-  color: #9a9a9a;
-
-  transform: translateX(-3%);
-
-}
-
-.track_banner_leftInfo_data{
-  margin-left: 5px;
-}
-
-.track_banner_leftInfo_img img{
-  box-sizing: border-box;
-  border: 3px solid grey;
-
-  transform: translateX(-3%);
-}
-
-.banner_title {
-  color: #ffff64;
-  font-size: 2.25em;
-  margin-top: 10px;
-}
-
-.banner_band {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-
-  color: white;
-}
-
-.banner_data {
-  color: #7d8fe8;
-  padding-left: 5px;
-}
-
-
-
-
-
 .track_lyric_anno_wrapper {
   box-sizing: border-box;
 
@@ -172,11 +98,11 @@
 
 
 
-.highlight {
+.inactive {
   background-color: #dddddd;
   padding: 4px 2px;
 }
-.highlight:hover{
+.inactive:hover{
   background-color:  #ffff64;
   cursor: pointer;
 }

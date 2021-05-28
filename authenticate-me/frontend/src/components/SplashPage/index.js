@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom'
 import { csrfFetch } from '../../store/csrf'
 import './SplashPage.css'
 
-
 function SplashPage() {
   const [trackList, setTrackList] = useState({})
 

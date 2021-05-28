@@ -15,7 +15,7 @@ import './TrackPage.css'
 function TrackPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [lyrics, setLyrics] = useState('')
-  const [annotations, setAnnotations] = useState({})
+  const [annotationMap, setAnnotationMap] = useState({})
   const [activeAnnotation, setActiveAnnotation] = useState('')
   const [defaultAnnotation, setDefaultAnnotation] = useState('Looks like this track doesn\'t have a default annotation')
 
@@ -47,10 +47,7 @@ function TrackPage() {
   // Retrieve the lyrics from our store variable and set the local state
   useEffect(() => {
     if (trackData?.lyrics) {
-      let temp = (trackData.lyrics.split('\n'))
-      temp = temp.map(string => string.trimLeft())
-      temp = temp.join('\n')
-      setLyrics(temp)
+      setLyrics(trackData.lyrics)
     }
   }, [isLoaded])
 
@@ -66,66 +63,70 @@ function TrackPage() {
 
 
 
-  // const highlightLyric = (e) => {
-  //   const selection = window.getSelection()
-
-  //   let start = selection.anchorNode
-  //   let startOffset = selection.anchorOffset
-  //   let end = selection.focusNode
-  //   let endOffset = selection.focusOffset
-
-  //   // TEMP
-  //   // if (startOffset === endOffset) {
-  //   //   return retrieveAnnotation(e)
-  //   // }
-
-  //   if (startOffset > endOffset) {
-  //     let temp = [start, startOffset]
-  //     start = end
-  //     startOffset = endOffset
-  //     end = temp[0]
-  //     endOffset = temp[1]
-  //   }
-
-  //   // Prevents any nesting of sannotations
-  //   if (start.parentElement.className !== 'track_lyric_wrapper' || end.parentElement.className !== 'track_lyric_wrapper') {
-  //     return
-  //   }
-
-  //   selection.removeAllRanges();
-  //   let range = document.createRange()
-  //   range.setStart(start, startOffset)
-  //   range.setEnd(end, endOffset)
-  //   selection.addRange(range)
+  const highlightLyric = (e) => {
+    let text = window.getSelection().toString();
+    setHighlightedText(text)
+    return
 
 
-  //   setHighlightedText(range.toString())
-  //   // TEMP
-  //   // createAnnotationCoordinates()
+    const selection = window.getSelection()
 
-  //   // Bring up that annotation form
-  //   if (sessionUser) {
-  //     let form = document.getElementsByClassName('new_annotation_form')[0]
-  //     form.classList.remove('hidden')
+    let start = selection.anchorNode
+    let startOffset = selection.anchorOffset
+    let end = selection.focusNode
+    let endOffset = selection.focusOffset
 
-  //     let header = document.getElementsByClassName('annotation_header')[0]
-  //     header.classList.add('hidden')
+    // TEMP
+    // if (startOffset === endOffset) {
+    //   return retrieveAnnotation(e)
+    // }
 
-  //     let contents = document.getElementsByClassName('annotation_contents')[0]
-  //     contents.classList.add('hidden')
+    if (startOffset > endOffset) {
+      let temp = [start, startOffset]
+      start = end
+      startOffset = endOffset
+      end = temp[0]
+      endOffset = temp[1]
+    }
 
-  //     let oldActive = document.querySelector('.active')
-  //     while (oldActive) {
-  //       oldActive.classList.remove('active')
-  //       oldActive = document.querySelector('.active')
-  //     }
-  //   } else {
-  //     setActiveAnnotation('Please sign in to annotate')
-  //   }
+    // Prevents any nesting of sannotations
+    if (start.parentElement.className !== 'track_lyric_wrapper' || end.parentElement.className !== 'track_lyric_wrapper') {
+      return
+    }
 
-  //   // TEMP
-  //   // setAnnotationWrapper(e)
-  // }
+    selection.removeAllRanges();
+    let range = document.createRange()
+    range.setStart(start, startOffset)
+    range.setEnd(end, endOffset)
+    selection.addRange(range)
+
+
+    setHighlightedText(range.toString())
+    createAnnotationCoordinates()
+
+    // Bring up that annotation form
+    // if (sessionUser) {
+    //   let form = document.getElementsByClassName('new_annotation_form')[0]
+    //   form.classList.remove('hidden')
+
+    //   let header = document.getElementsByClassName('annotation_header')[0]
+    //   header.classList.add('hidden')
+
+    //   let contents = document.getElementsByClassName('annotation_contents')[0]
+    //   contents.classList.add('hidden')
+
+    //   let oldActive = document.querySelector('.active')
+    //   while (oldActive) {
+    //     oldActive.classList.remove('active')
+    //     oldActive = document.querySelector('.active')
+    //   }
+    // } else {
+    //   setActiveAnnotation('Please sign in to annotate')
+    // }
+
+    // TEMP
+    // setAnnotationWrapper(e)
+  }
 
 
 
@@ -175,38 +176,41 @@ function TrackPage() {
         }
       }
 
+      // User highlighted text is handled the same way exisiting annotations are, so this function pulls double duty
+      const highlightedTextCoordinates = []
+      if (highlightedText) {
 
-      // const highlightedTextCoordinates = []
-      // if (highlightedText) {
-      //   let index = 0
-      //   while (index > -1) {
-      //     let start = lyrics.indexOf(highlightedText, index)
-      //     let end = start + highlightedText.length
+        // Find all the occurences of the highlighted lyric
+        let index = 0
+        while (index > -1) {
+          let start = lyrics.indexOf(highlightedText, index)
+          let end = start + highlightedText.length
 
-      //     // If we actually find the lyric, start searching from the last found location (end) and push the coordinates to the coordinateArray
-      //     if (start > -1) {
-      //       highlightedTextCoordinates.push([start, end])
-      //       index = end
-      //     } else {
-      //       index = -1
-      //     }
-      //   }
+          // If we actually find the lyric, start searching from the last found location (end) and push the coordinates to the coordinateArray
+          if (start > -1) {
+            highlightedTextCoordinates.push([start, end])
+            index = end
+          } else {
+            index = -1
+          }
+        }
 
-      //   highlightedTextCoordinates.forEach(highlighted_tuple => {
-      //     let safeToAdd = true
-      //     coordinateArray.forEach(annotation_tuple => {
-      //       if (highlighted_tuple[0] >= annotation_tuple[0] && highlighted_tuple[1] <= annotation_tuple[1]) {
-      //         // don't add it cuz it's inside something that's already annotated
-      //         safeToAdd = false
-      //       }
-      //       else if (highlighted_tuple[0] <= annotation_tuple[0] && highlighted_tuple[1] >= annotation_tuple[1]) {
-      //         // don't add it cuz it's wrapping something that's already annotated
-      //         safeToAdd = false
-      //       }
-      //     })
-      //     if (safeToAdd) coordinateArray.push(highlighted_tuple)
-      //   })
-      // }
+        // highlightedTextCoordinates is temporary storage.
+        // It holds all the indices of the highlighted lyric, but we need to do other checks before adding this indices to the the Coordinate array
+        // NAMELY we need to check iif any of the highlighted indices overlap with prexesting annotation indices
+        highlightedTextCoordinates.forEach(highlighted_tuple => {
+          let safeToAdd = true
+          coordinateArray.forEach(annotation_tuple => {
+            // Does the highlight start in the middle of an existing annotation?
+            if (highlighted_tuple[0] >= annotation_tuple[0] && highlighted_tuple[0] <= annotation_tuple[1]) safeToAdd = false
+            // Does the highlight end in the middle of an existing annotation?
+            else if (highlighted_tuple[1] >= annotation_tuple[0] && highlighted_tuple[1] <= annotation_tuple[1]) safeToAdd = false
+            // Does the highlight wrap an existing annotation?
+            else if (highlighted_tuple[0] <= annotation_tuple[0] && highlighted_tuple[1] >= annotation_tuple[1]) safeToAdd = false
+          })
+          if (safeToAdd) coordinateArray.push(highlighted_tuple)
+        })
+      }
 
 
       // Annotations need to be added from the end to the beginning, so we have to sort all the start indices
@@ -218,7 +222,7 @@ function TrackPage() {
       // used to wrap the appropriate lyrics in annotation-colored spans
       setAnnotationCoordinates(coordinateArray)
       // Used to lookup annotations really quickly
-      setAnnotations(annotationsObj)
+      setAnnotationMap(annotationsObj)
     }
   }
   useEffect(() => {
@@ -246,35 +250,42 @@ function TrackPage() {
   // Wrap each annotated lyric in a span (aka highlight that lyric)
   const wrapAnnotations = () => {
     if (isLoaded && trackData?.lyrics) {
-      // let node = document.getElementsByClassName('track_lyric_wrapper')[0]
+
       let node = lyricRef.current
 
-      while (node.firstChild) {
-        node.removeChild(node.firstChild);
-      }
+      // The entire lyric div is made as a unit.
+      //You can't modify it, you can only delete it and recreate a new one
 
+      // delete the old lyric node if there is one
+      while (node.firstChild) node.removeChild(node.firstChild)
+
+      // Create a new node and populate it with the lyrics
       let textNode = document.createTextNode(lyrics)
       node.appendChild(textNode)
-      // node.appendChild(textNode)
 
+
+      // This is where the span wrapping occurs
       annotationCoordinates.forEach(value => {
         try {
+
+          // Create a range that starts and ends in the lyric node with the start and end indices from
+          //   the annotationCoordinates
           let range = document.createRange()
           range.setStart(textNode, value[0])
           range.setEnd(textNode, value[1])
 
+          // if the range is equal to the currently highlighted text, then style the range as 'active'
+          // if it's not, then style it as 'highlight'
           const span = document.createElement('span')
-
           if (range.toString() === highlightedText) {
             span.classList.add('active')
           } else {
             // TEMP
             // span.addEventListener('click', retrieveAnnotation)
-            span.classList.add('highlight')
+            span.classList.add('inactive')
           }
 
           range.surroundContents(span)
-
         } catch (error) {
 
         }
@@ -464,7 +475,7 @@ function TrackPage() {
             <div
               className='track_lyric_wrapper'
               ref={lyricRef}
-            // onMouseUp={highlightLyric}
+              onMouseUp={highlightLyric}
             >
             </div>
             <div className='track_anno_wrapper' style={{ top: annotationPosition.y }}>
