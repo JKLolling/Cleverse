@@ -1,37 +1,31 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
-const AnnotationContainer = ({ isLoaded, defaultAnnotation, setActiveAnnotation, activeAnnotation, clientY, annotationContent }) => {
+const AnnotationContainer = ({ isLoaded, clientY, annotationContent }) => {
   const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [newAnnotation, setNewAnnotation] = useState('')
-  const [errors, setErrors] = useState([])
 
   const trackData = useSelector(state => state.track);
-  const sessionUser = useSelector(state => state.session.user);
 
+  // // Load the default annotation at the beginning
+  // useEffect(() => {
+  //   if (trackData && isLoaded) {
+  //     displayDefaultAnnotation()
+  //   }
+  // }, [isLoaded])
 
-  // Load the default annotation at the beginning
-  useEffect(() => {
-    if (trackData && isLoaded) {
-      displayDefaultAnnotation()
-    }
-  }, [isLoaded])
+  // const displayDefaultAnnotation = () => {
+  //   const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
+  //   wrapper.classList.add('display')
+  //   setannotationPosition({ x: 0, y: 0 })
+  //   setMousePosition({ x: 0, y: 10000 })
 
-  const displayDefaultAnnotation = () => {
-    const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
-    wrapper.classList.add('display')
-    setannotationPosition({ x: 0, y: 0 })
-    setMousePosition({ x: 0, y: 10000 })
-    setActiveAnnotation(defaultAnnotation)
-
-    let oldActive = document.querySelector('.active')
-    while (oldActive) {
-      oldActive.classList.remove('active')
-      oldActive = document.querySelector('.active')
-    }
-  }
-
+  //   let oldActive = document.querySelector('.active')
+  //   while (oldActive) {
+  //     oldActive.classList.remove('active')
+  //     oldActive = document.querySelector('.active')
+  //   }
+  // }
 
 
   // Set the position of the box that contains the annotations and retrigger the annomation to bring it into view

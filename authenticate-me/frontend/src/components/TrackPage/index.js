@@ -15,36 +15,31 @@ import Annotation from './Annotation'
 // Styling
 import './TrackPage.css'
 
+const DEFAULT_ANNO = 'Looks like this track doesn\'t have a default annotation'
+
 function TrackPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [lyrics, setLyrics] = useState('')
+
   const [annotationMap, setAnnotationMap] = useState({})
-  const [activeAnnotation, setActiveAnnotation] = useState('')
-  const [defaultAnnotation, setDefaultAnnotation] = useState('Looks like this track doesn\'t have a default annotation')
-
+  const [defaultAnnotation, setDefaultAnnotation] = useState(DEFAULT_ANNO)
   const [annotationCoordinates, setAnnotationCoordinates] = useState([])
-
-
   const [clientY, setClientY] = useState(null)
 
-
-  // const [newAnnotation, setNewAnnotation] = useState('')
   const [highlightedText, setHighlightedText] = useState('')
 
-  const [numAnnotations, setNumAnnotations] = useState(0)
+  // const [numAnnotations, setNumAnnotations] = useState(0)
 
 
   const [annotationContent, setAnnotationContent] = useState(null)
 
-  // const [errors, setErrors] = useState([])
-
   const dispatch = useDispatch()
   const trackData = useSelector(state => state.track)
-  const id = useParams().trackId
   const sessionUser = useSelector(state => state.session.user);
 
-  const lyricRef = useRef()
+  const id = useParams().trackId
 
+  const lyricRef = useRef()
 
   // Get lyrics from the database
   useEffect(() => {
@@ -54,54 +49,22 @@ function TrackPage() {
 
   // Retrieve the lyrics from our store variable and set the local state
   useEffect(() => {
-    if (trackData?.lyrics) {
+    if (trackData?.lyrics && isLoaded) {
       setLyrics(trackData.lyrics)
     }
-  }, [isLoaded])
+    setDefaultAnnotation(DEFAULT_ANNO)
+  }, [trackData, isLoaded])
 
-
-
-
-  const highlightLyric = (e) => {
-    if (annotationMap[e.target.innerText]) {
-      return clickAnnotatedLyric(e)
-    }
-
-    let text = window.getSelection().toString().trim()
-    setHighlightedText(text)
-    setClientY(e.clientY)
-    if (!text) return setAnnotationContent(<Annotation activeAnnotation={defaultAnnotation} />)
-
-    // Bring up that annotation form
-    if (sessionUser) {
-      setAnnotationContent(
-        <NewAnnotationForm></NewAnnotationForm>
-      )
-
-      let oldActive = document.querySelector('.active')
-      while (oldActive) {
-        oldActive.classList.remove('active')
-        oldActive = document.querySelector('.active')
-      }
-    } else {
-      setAnnotationContent(<Annotation activeAnnotation={'Please sign in to annotate'} />)
-      // setActiveAnnotation('Please sign in to annotate')
-    }
-
-    setClientY(e.clientY)
-  }
-
-
-
-
-
-
-
+  useEffect(() => {
+    setAnnotationContent(<Annotation activeAnnotation={defaultAnnotation} />)
+  }, [defaultAnnotation])
 
 
   // Calculate where the existing annotations should go
+  // NB THIS IS ALSO THE FUNCTION THAT DETERMINES WHAT THE DEFAULT ANNO IS
   const createAnnotationCoordinates = () => {
     if (trackData?.Annotations) {
+
       let storeAnnotations = trackData.Annotations
 
       const coordinateArray = []
@@ -113,9 +76,7 @@ function TrackPage() {
 
         // If the annotaed lyric is null, that means this is the 'default' or 'general' annotation.
         if (!annotatedLyric) {
-          let defaultAnnotation = storeAnnotations[i].annotation
-          setDefaultAnnotation(defaultAnnotation)
-          // if (activeAnnotation === '') setActiveAnnotation(defaultAnnotation)
+          setDefaultAnnotation(storeAnnotations[i].annotation)
           continue
         }
 
@@ -163,7 +124,9 @@ function TrackPage() {
         // NAMELY we need to check iif any of the highlighted indices overlap with prexesting annotation indices
         highlightedTextCoordinates.forEach(highlighted_tuple => {
           let safeToAdd = true
+          // console.log('highlighted', highlighted_tuple)
           coordinateArray.forEach(annotation_tuple => {
+            // console.log(annotation_tuple)
             // Does the highlight start in the middle of an existing annotation?
             if (highlighted_tuple[0] >= annotation_tuple[0] && highlighted_tuple[0] <= annotation_tuple[1]) safeToAdd = false
             // Does the highlight end in the middle of an existing annotation?
@@ -171,7 +134,10 @@ function TrackPage() {
             // Does the highlight wrap an existing annotation?
             else if (highlighted_tuple[0] <= annotation_tuple[0] && highlighted_tuple[1] >= annotation_tuple[1]) safeToAdd = false
           })
-          if (safeToAdd) coordinateArray.push(highlighted_tuple)
+          if (safeToAdd) {
+            coordinateArray.push(highlighted_tuple)
+            presentAnnotationForm()
+          }
         })
       }
 
@@ -189,16 +155,31 @@ function TrackPage() {
   }
   useEffect(() => {
     createAnnotationCoordinates()
-  }, [lyrics, highlightedText, numAnnotations])
-  if (trackData?.Annotations?.length && numAnnotations !== trackData.Annotations.length) {
-    setNumAnnotations(trackData.Annotations.length)
-    createAnnotationCoordinates()
+  }, [lyrics, highlightedText])
+  // if (trackData?.Annotations?.length && numAnnotations !== trackData.Annotations.length) {
+  //   setNumAnnotations(trackData.Annotations.length)
+  //   createAnnotationCoordinates()
+  // }
+
+  const presentAnnotationForm = () => {
+    if (sessionUser) {
+      setAnnotationContent(
+        <NewAnnotationForm></NewAnnotationForm>
+      )
+
+      let oldActive = document.querySelector('.active')
+      while (oldActive) {
+        oldActive.classList.remove('active')
+        oldActive = document.querySelector('.active')
+      }
+    } else {
+      setAnnotationContent(<Annotation activeAnnotation={'Please sign in to annotate'} />)
+    }
   }
-
-
 
   // Wrap each annotated lyric in a span (aka highlight that lyric)
   const wrapAnnotations = () => {
+    // console.log('hi', isLoaded, trackData?.lyrics)
     if (isLoaded && trackData?.lyrics) {
 
       let node = lyricRef.current
@@ -243,46 +224,18 @@ function TrackPage() {
   }
   useEffect(() => {
     wrapAnnotations()
-  }, [annotationCoordinates])
+  }, [annotationCoordinates, isLoaded])
 
 
 
-  // const submitNewAnnotation = async (e) => {
-  //   e.preventDefault()
+  const highlightLyric = (e) => {
+    if (annotationMap[e.target.innerText]) return clickAnnotatedLyric(e)
 
-  //   e.target.value = 'hello'
-
-  //   const newErrors = []
-  //   if (!highlightedText.length) {
-  //     newErrors.push('You must highlight a lyric to annotate')
-  //   } else if (!newAnnotation?.length) {
-  //     newErrors.push('You cannot submit an empty annotation')
-  //   }
-  //   else {
-  //     setErrors([])
-  //     let data = {
-  //       annotation: newAnnotation,
-  //       lyric: highlightedText,
-  //       userId: sessionUser.id,
-  //       trackId: trackData.id
-  //     }
-  //     const res = await dispatch(trackActions.asyncSaveAnnotation(data))
-  //   }
-  //   setErrors(newErrors)
-  //   setActiveAnnotation(newAnnotation)
-
-  //   let form = document.getElementsByClassName('new_annotation_form')[0]
-  //   form.classList.add('hidden')
-
-  //   let header = document.getElementsByClassName('annotation_header')[0]
-  //   header.classList.remove('hidden')
-
-  //   let contents = document.getElementsByClassName('annotation_contents')[0]
-  //   contents.classList.remove('hidden')
-
-  //   setHighlightedText('')
-  // }
-
+    let text = window.getSelection().toString().trim()
+    setHighlightedText(text)
+    setClientY(e.clientY)
+    if (!text) return setAnnotationContent(<Annotation activeAnnotation={defaultAnnotation} />)
+  }
 
 
   const clickAnnotatedLyric = (e) => {
@@ -290,10 +243,7 @@ function TrackPage() {
 
     const lyric = e.target.innerText
     const annotationObj = annotationMap[lyric]
-    if (!annotationObj) {
-      return
-      // return displayDefaultAnnotation()
-    }
+    if (!annotationObj) return
 
     // Find the last clicked lyric and remove the 'active' class from that lyric's span
     let oldActive = e.target.parentElement.querySelector('.active')
@@ -312,19 +262,8 @@ function TrackPage() {
       }
     }
 
-    // setActiveAnnotation(annotationObj.annotation)
     setAnnotationContent(<Annotation activeAnnotation={annotationObj.annotation} />)
     setClientY(e.clientY)
-
-
-    // let form = document.getElementsByClassName('new_annotation_form')[0]
-    // form.classList.add('hidden')
-
-    // let header = document.getElementsByClassName('annotation_header')[0]
-    // header.classList.remove('hidden')
-
-    // let contents = document.getElementsByClassName('annotation_contents')[0]
-    // contents.classList.remove('hidden')
   }
 
 
@@ -346,9 +285,8 @@ function TrackPage() {
             >
             </div>
             <AnnotationContainer
-              isLoaded={isLoaded}
-              setActiveAnnotation={setActiveAnnotation}
               defaultAnnotation={defaultAnnotation}
+              isLoaded={isLoaded}
               clientY={clientY}
               annotationContent={annotationContent}
             />
