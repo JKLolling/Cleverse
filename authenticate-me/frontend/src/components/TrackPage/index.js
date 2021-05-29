@@ -8,6 +8,9 @@ import * as trackActions from '../../store/track'
 // Other pages
 import PageNotFound from '../PageNotFound'
 import SongBanner from './SongBanner'
+import AnnotationContainer from './AnnotationContainer'
+import NewAnnotationForm from './NewAnnotationForm'
+import Annotation from './Annotation'
 
 // Styling
 import './TrackPage.css'
@@ -20,15 +23,20 @@ function TrackPage() {
   const [defaultAnnotation, setDefaultAnnotation] = useState('Looks like this track doesn\'t have a default annotation')
 
   const [annotationCoordinates, setAnnotationCoordinates] = useState([])
-  const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
-  const [newAnnotation, setNewAnnotation] = useState('')
+
+  const [clientY, setClientY] = useState(null)
+
+
+  // const [newAnnotation, setNewAnnotation] = useState('')
   const [highlightedText, setHighlightedText] = useState('')
 
   const [numAnnotations, setNumAnnotations] = useState(0)
 
-  const [errors, setErrors] = useState([])
+
+  const [annotationContent, setAnnotationContent] = useState(null)
+
+  // const [errors, setErrors] = useState([])
 
   const dispatch = useDispatch()
   const trackData = useSelector(state => state.track)
@@ -54,78 +62,33 @@ function TrackPage() {
 
 
 
-
-
-
-
-
-
-
-
-
   const highlightLyric = (e) => {
-    let text = window.getSelection().toString();
+    if (annotationMap[e.target.innerText]) {
+      return clickAnnotatedLyric(e)
+    }
+
+    let text = window.getSelection().toString().trim()
     setHighlightedText(text)
-    return
-
-
-    const selection = window.getSelection()
-
-    let start = selection.anchorNode
-    let startOffset = selection.anchorOffset
-    let end = selection.focusNode
-    let endOffset = selection.focusOffset
-
-    // TEMP
-    // if (startOffset === endOffset) {
-    //   return retrieveAnnotation(e)
-    // }
-
-    if (startOffset > endOffset) {
-      let temp = [start, startOffset]
-      start = end
-      startOffset = endOffset
-      end = temp[0]
-      endOffset = temp[1]
-    }
-
-    // Prevents any nesting of sannotations
-    if (start.parentElement.className !== 'track_lyric_wrapper' || end.parentElement.className !== 'track_lyric_wrapper') {
-      return
-    }
-
-    selection.removeAllRanges();
-    let range = document.createRange()
-    range.setStart(start, startOffset)
-    range.setEnd(end, endOffset)
-    selection.addRange(range)
-
-
-    setHighlightedText(range.toString())
-    createAnnotationCoordinates()
+    setClientY(e.clientY)
+    if (!text) return setAnnotationContent(<Annotation activeAnnotation={defaultAnnotation} />)
 
     // Bring up that annotation form
-    // if (sessionUser) {
-    //   let form = document.getElementsByClassName('new_annotation_form')[0]
-    //   form.classList.remove('hidden')
+    if (sessionUser) {
+      setAnnotationContent(
+        <NewAnnotationForm></NewAnnotationForm>
+      )
 
-    //   let header = document.getElementsByClassName('annotation_header')[0]
-    //   header.classList.add('hidden')
+      let oldActive = document.querySelector('.active')
+      while (oldActive) {
+        oldActive.classList.remove('active')
+        oldActive = document.querySelector('.active')
+      }
+    } else {
+      setAnnotationContent(<Annotation activeAnnotation={'Please sign in to annotate'} />)
+      // setActiveAnnotation('Please sign in to annotate')
+    }
 
-    //   let contents = document.getElementsByClassName('annotation_contents')[0]
-    //   contents.classList.add('hidden')
-
-    //   let oldActive = document.querySelector('.active')
-    //   while (oldActive) {
-    //     oldActive.classList.remove('active')
-    //     oldActive = document.querySelector('.active')
-    //   }
-    // } else {
-    //   setActiveAnnotation('Please sign in to annotate')
-    // }
-
-    // TEMP
-    // setAnnotationWrapper(e)
+    setClientY(e.clientY)
   }
 
 
@@ -152,7 +115,7 @@ function TrackPage() {
         if (!annotatedLyric) {
           let defaultAnnotation = storeAnnotations[i].annotation
           setDefaultAnnotation(defaultAnnotation)
-          if (activeAnnotation === '') setActiveAnnotation(defaultAnnotation)
+          // if (activeAnnotation === '') setActiveAnnotation(defaultAnnotation)
           continue
         }
 
@@ -212,7 +175,6 @@ function TrackPage() {
         })
       }
 
-
       // Annotations need to be added from the end to the beginning, so we have to sort all the start indices
       //  we sort it from largest to smallest
       coordinateArray.sort((a, b) => {
@@ -235,18 +197,6 @@ function TrackPage() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   // Wrap each annotated lyric in a span (aka highlight that lyric)
   const wrapAnnotations = () => {
     if (isLoaded && trackData?.lyrics) {
@@ -262,7 +212,6 @@ function TrackPage() {
       // Create a new node and populate it with the lyrics
       let textNode = document.createTextNode(lyrics)
       node.appendChild(textNode)
-
 
       // This is where the span wrapping occurs
       annotationCoordinates.forEach(value => {
@@ -295,28 +244,6 @@ function TrackPage() {
   useEffect(() => {
     wrapAnnotations()
   }, [annotationCoordinates])
-
-
-
-
-
-
-
-
-
-
-
-  // // ANNOTATIONS
-
-  // // Load the default annotation at the beginning
-  // useEffect(() => {
-  //   if (trackData && isLoaded) {
-  //     displayDefaultAnnotation()
-  //   }
-  // }, [isLoaded])
-
-
-
 
 
 
@@ -358,108 +285,48 @@ function TrackPage() {
 
 
 
+  const clickAnnotatedLyric = (e) => {
+    e.stopPropagation()
+
+    const lyric = e.target.innerText
+    const annotationObj = annotationMap[lyric]
+    if (!annotationObj) {
+      return
+      // return displayDefaultAnnotation()
+    }
+
+    // Find the last clicked lyric and remove the 'active' class from that lyric's span
+    let oldActive = e.target.parentElement.querySelector('.active')
+    while (oldActive) {
+      oldActive.classList.remove('active')
+      oldActive = e.target.parentElement.querySelector('.active')
+    }
+
+    e.target.classList.add('active')
+
+    // Add the active class to all the spans that have the same lyrics
+    let children = e.target.parentElement.children
+    for (let index = 0; index < children.length; index++) {
+      if (children[index].innerText === e.target.innerText) {
+        children[index].classList.add('active')
+      }
+    }
+
+    // setActiveAnnotation(annotationObj.annotation)
+    setAnnotationContent(<Annotation activeAnnotation={annotationObj.annotation} />)
+    setClientY(e.clientY)
 
 
-  // const displayDefaultAnnotation = () => {
-  //   const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
-  //   wrapper.classList.add('display')
-  //   setannotationPosition({ x: 0, y: 0 })
-  //   setMousePosition({ x: 0, y: 10000 })
-  //   setActiveAnnotation(defaultAnnotation)
+    // let form = document.getElementsByClassName('new_annotation_form')[0]
+    // form.classList.add('hidden')
 
-  //   let form = document.getElementsByClassName('new_annotation_form')[0]
-  //   form.classList.add('hidden')
+    // let header = document.getElementsByClassName('annotation_header')[0]
+    // header.classList.remove('hidden')
 
-  //   let header = document.getElementsByClassName('annotation_header')[0]
-  //   header.classList.remove('hidden')
+    // let contents = document.getElementsByClassName('annotation_contents')[0]
+    // contents.classList.remove('hidden')
+  }
 
-  //   let contents = document.getElementsByClassName('annotation_contents')[0]
-  //   contents.classList.remove('hidden')
-
-  //   let oldActive = document.querySelector('.active')
-  //   while (oldActive) {
-  //     oldActive.classList.remove('active')
-  //     oldActive = document.querySelector('.active')
-  //   }
-  // }
-
-
-
-
-
-  // const retrieveAnnotation = (e) => {
-  //   e.stopPropagation()
-
-  //   let form = document.getElementsByClassName('new_annotation_form')[0]
-  //   form.classList.add('hidden')
-
-  //   let header = document.getElementsByClassName('annotation_header')[0]
-  //   header.classList.remove('hidden')
-
-  //   let contents = document.getElementsByClassName('annotation_contents')[0]
-  //   contents.classList.remove('hidden')
-
-  //   const lyric = e.target.innerText
-
-  //   const annotationObj = annotations[lyric]
-  //   if (!annotationObj) {
-  //     return displayDefaultAnnotation()
-  //   }
-
-  //   let oldActive = e.target.parentElement.querySelector('.active')
-  //   while (oldActive) {
-  //     oldActive.classList.remove('active')
-  //     oldActive = e.target.parentElement.querySelector('.active')
-  //   }
-
-  //   e.target.classList.add('active')
-
-  //   let children = e.target.parentElement.children
-  //   for (let index = 0; index < children.length; index++) {
-  //     if (children[index].innerText === e.target.innerText) {
-  //       children[index].classList.add('active')
-  //     }
-  //   }
-
-
-  //   let annotation = annotationObj.annotation
-
-  //   annotation = annotation.replaceAll('          ', '')
-  //   annotation = annotation.replaceAll('        ', '')
-  //   annotation.trimLeft()
-
-  //   setActiveAnnotation(annotation)
-  //   setAnnotationWrapper(e)
-  // }
-
-
-
-
-
-
-  // Set the position of the box that contains the annotations and retrigger the annomation to bring it into view
-  // const setAnnotationWrapper = (e) => {
-  //   let yPosition = window.pageYOffset || document.documentElement.scrollTop;
-  //   yPosition -= 300
-  //   if (yPosition < 0) yPosition = 0
-
-  //   let temp = (e.clientY - 975)
-  //   let offset = window.pageYOffset || document.documentElement.scrollTop;
-
-  //   if (offset <= 300) {
-  //     temp = temp - 300 + offset
-  //   }
-
-  //   setMousePosition({ x: 0, y: temp })
-  //   setannotationPosition({ x: 0, y: yPosition })
-
-  //   // The css slide transition
-  //   const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
-  //   wrapper.classList.remove('display')
-  //   setTimeout(() => {
-  //     wrapper.classList.add('display')
-  //   }, 1);
-  // }
 
   const trackIsValid = !!trackData
   if (isLoaded && !trackIsValid) {
@@ -478,44 +345,13 @@ function TrackPage() {
               onMouseUp={highlightLyric}
             >
             </div>
-            <div className='track_anno_wrapper' style={{ top: annotationPosition.y }}>
-              <div className='anno_arrow_wrapper'>
-                <img src='/images/arrow.png' className='anno_arrow' style={{ top: mousePosition.y }} />
-              </div>
-              <div className='annotation'>
-                <div className='annotation_header'>Cleverse Annotation:</div>
-                <div className='annotation_contents'>
-                  {activeAnnotation}
-                </div>
-                <div className='new_annotation_form hidden'>
-                  <form
-                    value={newAnnotation}
-                    // onSubmit={submitNewAnnotation}
-                    className='new_annotation_form_innerDiv'>
-                    <ul className='new_annotation_errors'>
-                      {errors.map((error, idx) => <li key={idx}>{error}</li>)}
-                    </ul>
-                    <div >
-                      <textarea
-                        className='new_annotation_input'
-                        defaultValue='Drop some sweet knowledge bombs'
-                        onBlur={e => {
-                          setNewAnnotation(e.target.value)
-                          e.target.value = 'Drop some sweet knowledge bombs'
-                        }}
-                        onFocus={e => e.target.value = ''}
-                      />
-                    </div>
-                    <div>
-                      <button
-                        type='submit'
-                        className='new_annotation_button'
-                      >Save</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
+            <AnnotationContainer
+              isLoaded={isLoaded}
+              setActiveAnnotation={setActiveAnnotation}
+              defaultAnnotation={defaultAnnotation}
+              clientY={clientY}
+              annotationContent={annotationContent}
+            />
           </div>
         </div >
       )
