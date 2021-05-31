@@ -1,32 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 
-const AnnotationContainer = ({ isLoaded, clientY, annotationContent }) => {
+const AnnotationContainer = ({ clientY, annotationContent }) => {
   const [annotationPosition, setannotationPosition] = useState({ x: 0, y: 0 })
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-
-  const trackData = useSelector(state => state.track);
-
-  // // Load the default annotation at the beginning
-  // useEffect(() => {
-  //   if (trackData && isLoaded) {
-  //     displayDefaultAnnotation()
-  //   }
-  // }, [isLoaded])
-
-  // const displayDefaultAnnotation = () => {
-  //   const wrapper = document.getElementsByClassName('track_anno_wrapper')[0]
-  //   wrapper.classList.add('display')
-  //   setannotationPosition({ x: 0, y: 0 })
-  //   setMousePosition({ x: 0, y: 10000 })
-
-  //   let oldActive = document.querySelector('.active')
-  //   while (oldActive) {
-  //     oldActive.classList.remove('active')
-  //     oldActive = document.querySelector('.active')
-  //   }
-  // }
-
 
   // Set the position of the box that contains the annotations and retrigger the annomation to bring it into view
   useEffect(() => {

@@ -164,7 +164,13 @@ function TrackPage() {
   const presentAnnotationForm = () => {
     if (sessionUser) {
       setAnnotationContent(
-        <NewAnnotationForm></NewAnnotationForm>
+        <NewAnnotationForm
+          highlightedText={highlightedText}
+          sessionUser={sessionUser}
+          setAnnotationContent={setAnnotationContent}
+          setHighlightedText={setHighlightedText}
+        >
+        </NewAnnotationForm>
       )
 
       let oldActive = document.querySelector('.active')
@@ -224,16 +230,26 @@ function TrackPage() {
   }
   useEffect(() => {
     wrapAnnotations()
-  }, [annotationCoordinates, isLoaded])
+  }, [annotationCoordinates, isLoaded, highlightedText])
 
 
 
   const highlightLyric = (e) => {
+
+    // Find the last clicked lyric and remove the 'active' class from that lyric's span
+    let oldActive = e.target.parentElement.querySelector('.active')
+    while (oldActive) {
+      oldActive.classList.remove('active')
+      oldActive = e.target.parentElement.querySelector('.active')
+    }
+
+
     if (annotationMap[e.target.innerText]) return clickAnnotatedLyric(e)
 
     let text = window.getSelection().toString().trim()
     setHighlightedText(text)
     setClientY(e.clientY)
+
     if (!text) return setAnnotationContent(<Annotation activeAnnotation={defaultAnnotation} />)
   }
 
@@ -245,16 +261,9 @@ function TrackPage() {
     const annotationObj = annotationMap[lyric]
     if (!annotationObj) return
 
-    // Find the last clicked lyric and remove the 'active' class from that lyric's span
-    let oldActive = e.target.parentElement.querySelector('.active')
-    while (oldActive) {
-      oldActive.classList.remove('active')
-      oldActive = e.target.parentElement.querySelector('.active')
-    }
-
-    e.target.classList.add('active')
 
     // Add the active class to all the spans that have the same lyrics
+    e.target.classList.add('active')
     let children = e.target.parentElement.children
     for (let index = 0; index < children.length; index++) {
       if (children[index].innerText === e.target.innerText) {
