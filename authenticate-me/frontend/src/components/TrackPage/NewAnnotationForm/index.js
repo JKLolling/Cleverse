@@ -6,18 +6,17 @@ import * as trackActions from '../../../store/track'
 import Annotation from '../Annotation'
 
 
-const NewAnnotationForm = ({ sessionUser, highlightedText, setHighlightedText, setAnnotationContent }) => {
+const NewAnnotationForm = ({ sessionUser, highlightedText, setHighlightedText, setAnnotationContent, newAnnoCords }) => {
   const dispatch = useDispatch()
   const trackData = useSelector(store => store.track)
 
   const [errors, setErrors] = useState([])
   const [newAnnotation, setNewAnnotation] = useState()
+  const [loading, setLoading] = useState(false)
 
 
   const submitNewAnnotation = async (e) => {
     e.preventDefault()
-
-    e.target.value = 'hello'
 
     const newErrors = []
     if (!highlightedText.length) {
@@ -27,13 +26,19 @@ const NewAnnotationForm = ({ sessionUser, highlightedText, setHighlightedText, s
     }
     else {
       setErrors([])
-      let data = {
-        annotation: newAnnotation,
-        lyric: highlightedText,
-        userId: sessionUser.id,
-        trackId: trackData.id
-      }
-      const res = await dispatch(trackActions.asyncSaveAnnotation(data))
+      console.log(newAnnoCords.current)
+      return
+      // newAnnoCords.current.forEach(tuple => {
+      // console.log(tuple)
+      // let data = {
+      //   annotation: newAnnotation,
+      //   lyric: highlightedText,
+      //   userId: sessionUser.id,
+      //   trackId: trackData.id,
+
+      // }
+      // await dispatch(trackActions.asyncSaveAnnotation(data))
+      // });
       setAnnotationContent(<Annotation activeAnnotation={newAnnotation} />)
       setHighlightedText('')
     }
@@ -58,14 +63,26 @@ const NewAnnotationForm = ({ sessionUser, highlightedText, setHighlightedText, s
               setNewAnnotation(e.target.value)
               e.target.value = 'Drop some sweet knowledge bombs'
             }}
+            onChange={() => {
+              setLoading(true)
+              setTimeout(() => {
+                setLoading(false)
+              }, 1400)
+            }}
             onFocus={e => e.target.value = ''}
           />
         </div>
         <div>
-          <button
-            type='submit'
-            className='new_annotation_button'
-          >Save</button>
+          {loading && (
+            <div>Loading</div>
+          )}
+          {!loading && (
+            <button
+              type='submit'
+              className='new_annotation_button'>
+              Save
+            </button>
+          )}
         </div>
       </form>
     </div>

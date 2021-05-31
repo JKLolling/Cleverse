@@ -5,9 +5,18 @@ const { Track, Annotation } = require('../../db/models')
 const router = express.Router()
 
 router.get('/:id(\\d+)', asyncHandler(async (req, res) => {
+  // const track = await Track.findByPk((req.params.id), {
+  //   include: Annotation
+  // })
+
   const track = await Track.findByPk((req.params.id), {
-    include: Annotation
+    include: Annotation,
+    order: [
+      [Annotation, 'createdAt', 'DESC'],
+    ]
   })
+
+
   res.json(track)
 }))
 

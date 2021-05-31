@@ -28,9 +28,6 @@ function TrackPage() {
 
   const [highlightedText, setHighlightedText] = useState('')
 
-  // const [numAnnotations, setNumAnnotations] = useState(0)
-
-
   const [annotationContent, setAnnotationContent] = useState(null)
 
   const dispatch = useDispatch()
@@ -40,6 +37,7 @@ function TrackPage() {
   const id = useParams().trackId
 
   const lyricRef = useRef()
+  const newAnnoCords = useRef()
 
   // Get lyrics from the database
   useEffect(() => {
@@ -60,13 +58,39 @@ function TrackPage() {
   }, [defaultAnnotation])
 
 
+
+  const isSafeToAdd = (tuple, bank) => {
+    let safeToAdd = true
+    bank.forEach(annotation_tuple => {
+      // Does the highlight start in the middle of an existing annotation?
+      if (tuple[0] >= annotation_tuple[0] && tuple[0] <= annotation_tuple[1]) {
+        safeToAdd = false
+        console.log('not safe', annotation_tuple)
+      }
+      // Does the highlight end in the middle of an existing annotation?
+      else if (tuple[1] >= annotation_tuple[0] && tuple[1] <= annotation_tuple[1]) {
+        safeToAdd = false
+        console.log('not safe', annotation_tuple)
+      }
+      // Does the highlight wrap an existing annotation?
+      else if (tuple[0] <= annotation_tuple[0] && tuple[1] >= annotation_tuple[1]) {
+        safeToAdd = false
+        console.log('not safe', annotation_tuple)
+      }
+    })
+    return safeToAdd
+  }
+
+  /*
+    Highlight coordinates gets called whenever a user highlights new text or when the lyrics change
+    This calculates the indices of where the annotation wrappers should go
+  */
   // Calculate where the existing annotations should go
   // NB THIS IS ALSO THE FUNCTION THAT DETERMINES WHAT THE DEFAULT ANNO IS
   const createAnnotationCoordinates = () => {
     if (trackData?.Annotations) {
 
       let storeAnnotations = trackData.Annotations
-
       const coordinateArray = []
       const annotationsObj = {}
 
@@ -92,6 +116,7 @@ function TrackPage() {
 
           // If we actually find the lyric, start searching from the last found location (end) and push the coordinates to the coordinateArray
           if (start > -1) {
+            // console.log(annotatedLyric, [start, end])
             coordinateArray.push([start, end])
             index = end
           } else {
@@ -103,7 +128,6 @@ function TrackPage() {
       // User highlighted text is handled the same way exisiting annotations are, so this function pulls double duty
       const highlightedTextCoordinates = []
       if (highlightedText) {
-
         // Find all the occurences of the highlighted lyric
         let index = 0
         while (index > -1) {
@@ -123,18 +147,8 @@ function TrackPage() {
         // It holds all the indices of the highlighted lyric, but we need to do other checks before adding this indices to the the Coordinate array
         // NAMELY we need to check iif any of the highlighted indices overlap with prexesting annotation indices
         highlightedTextCoordinates.forEach(highlighted_tuple => {
-          let safeToAdd = true
-          // console.log('highlighted', highlighted_tuple)
-          coordinateArray.forEach(annotation_tuple => {
-            // console.log(annotation_tuple)
-            // Does the highlight start in the middle of an existing annotation?
-            if (highlighted_tuple[0] >= annotation_tuple[0] && highlighted_tuple[0] <= annotation_tuple[1]) safeToAdd = false
-            // Does the highlight end in the middle of an existing annotation?
-            else if (highlighted_tuple[1] >= annotation_tuple[0] && highlighted_tuple[1] <= annotation_tuple[1]) safeToAdd = false
-            // Does the highlight wrap an existing annotation?
-            else if (highlighted_tuple[0] <= annotation_tuple[0] && highlighted_tuple[1] >= annotation_tuple[1]) safeToAdd = false
-          })
-          if (safeToAdd) {
+          if (isSafeToAdd(highlighted_tuple, coordinateArray)) {
+            newAnnoCords.current = newAnnoCords.current.push(highlighted_tuple)
             coordinateArray.push(highlighted_tuple)
             presentAnnotationForm()
           }
@@ -169,6 +183,7 @@ function TrackPage() {
           sessionUser={sessionUser}
           setAnnotationContent={setAnnotationContent}
           setHighlightedText={setHighlightedText}
+          newAnnoCords={newAnnoCords}
         >
         </NewAnnotationForm>
       )
@@ -235,6 +250,7 @@ function TrackPage() {
 
 
   const highlightLyric = (e) => {
+    newAnnoCords.current = []
 
     // Find the last clicked lyric and remove the 'active' class from that lyric's span
     let oldActive = e.target.parentElement.querySelector('.active')
@@ -242,7 +258,6 @@ function TrackPage() {
       oldActive.classList.remove('active')
       oldActive = e.target.parentElement.querySelector('.active')
     }
-
 
     if (annotationMap[e.target.innerText]) return clickAnnotatedLyric(e)
 
