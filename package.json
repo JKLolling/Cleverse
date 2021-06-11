@@ -1,5 +1,5 @@
 {
-  "name": "authenticate-me",
+  "name": "cleverse",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,5 +15,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0"
+  }
 }
