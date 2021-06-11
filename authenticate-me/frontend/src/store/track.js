@@ -28,7 +28,7 @@ export const asyncSaveAnnotation = (annotationData) => async (dispatch) => {
   })
   const data = await res.json()
 
-  dispatch(asyncFetchTrack(trackId))
+  // await dispatch(asyncFetchTrack(trackId))
   return data
 }
 

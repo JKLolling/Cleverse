@@ -34,10 +34,11 @@ function TrackPage() {
   const trackData = useSelector(state => state.track)
   const sessionUser = useSelector(state => state.session.user);
 
+
   const id = useParams().trackId
 
   const lyricRef = useRef()
-  const newAnnoCords = useRef()
+
 
   // Get lyrics from the database
   useEffect(() => {
@@ -59,30 +60,30 @@ function TrackPage() {
 
 
 
-  const isSafeToAdd = (tuple, bank) => {
+  const isSafeToAdd = (new_tuple, bank) => {
     let safeToAdd = true
-    bank.forEach(annotation_tuple => {
+    bank.forEach(existing_tuple => {
       // Does the highlight start in the middle of an existing annotation?
-      if (tuple[0] >= annotation_tuple[0] && tuple[0] <= annotation_tuple[1]) {
+      if (new_tuple[0] >= existing_tuple[0] && new_tuple[0] <= existing_tuple[1]) {
         safeToAdd = false
-        console.log('not safe', annotation_tuple)
+        // console.log('not safe', existing_tuple)
       }
       // Does the highlight end in the middle of an existing annotation?
-      else if (tuple[1] >= annotation_tuple[0] && tuple[1] <= annotation_tuple[1]) {
+      else if (new_tuple[1] >= existing_tuple[0] && new_tuple[1] <= existing_tuple[1]) {
         safeToAdd = false
-        console.log('not safe', annotation_tuple)
+        // console.log('not safe', existing_tuple)
       }
       // Does the highlight wrap an existing annotation?
-      else if (tuple[0] <= annotation_tuple[0] && tuple[1] >= annotation_tuple[1]) {
+      else if (new_tuple[0] <= existing_tuple[0] && new_tuple[1] >= existing_tuple[1]) {
         safeToAdd = false
-        console.log('not safe', annotation_tuple)
+        // console.log('not safe', existing_tuple)
       }
     })
     return safeToAdd
   }
 
   /*
-    Highlight coordinates gets called whenever a user highlights new text or when the lyrics change
+    createAnnotationCoordinates gets called whenever a user highlights new text or when the lyrics change
     This calculates the indices of where the annotation wrappers should go
   */
   // Calculate where the existing annotations should go
@@ -108,21 +109,8 @@ function TrackPage() {
         // This makes it easier to search for an annotation when you click on a lyric
         annotationsObj[annotatedLyric] = storeAnnotations[i]
 
-        // Adds multiple start/end coordinates if the lyric shows up multiple times
-        let index = 0
-        while (index > -1) {
-          let start = lyrics.indexOf(annotatedLyric, index)
-          let end = start + annotatedLyric.length
-
-          // If we actually find the lyric, start searching from the last found location (end) and push the coordinates to the coordinateArray
-          if (start > -1) {
-            // console.log(annotatedLyric, [start, end])
-            coordinateArray.push([start, end])
-            index = end
-          } else {
-            index = -1
-          }
-        }
+        // Add the start and end indices to our coordinate array
+        coordinateArray.push([storeAnnotations[i].startIndex, storeAnnotations[i].endIndex])
       }
 
       // User highlighted text is handled the same way exisiting annotations are, so this function pulls double duty
@@ -145,14 +133,16 @@ function TrackPage() {
 
         // highlightedTextCoordinates is temporary storage.
         // It holds all the indices of the highlighted lyric, but we need to do other checks before adding this indices to the the Coordinate array
-        // NAMELY we need to check iif any of the highlighted indices overlap with prexesting annotation indices
+        // NAMELY we need to check if any of the highlighted indices overlap with prexesting annotation indices
+        // let safeHighlightedCoordinates = []
+        let temp = []
         highlightedTextCoordinates.forEach(highlighted_tuple => {
           if (isSafeToAdd(highlighted_tuple, coordinateArray)) {
-            newAnnoCords.current = newAnnoCords.current.push(highlighted_tuple)
+            temp.push(highlighted_tuple)
             coordinateArray.push(highlighted_tuple)
-            presentAnnotationForm()
           }
         })
+        if (temp.length) presentAnnotationForm(temp, highlightedText)
       }
 
       // Annotations need to be added from the end to the beginning, so we have to sort all the start indices
@@ -169,13 +159,12 @@ function TrackPage() {
   }
   useEffect(() => {
     createAnnotationCoordinates()
-  }, [lyrics, highlightedText])
-  // if (trackData?.Annotations?.length && numAnnotations !== trackData.Annotations.length) {
-  //   setNumAnnotations(trackData.Annotations.length)
-  //   createAnnotationCoordinates()
-  // }
+  }, [lyrics, highlightedText, trackData.Annotations])
 
-  const presentAnnotationForm = () => {
+
+  // Gets called when the user highlights text that has no annotation
+  const presentAnnotationForm = (temp) => {
+    console.log('from the track page', temp)
     if (sessionUser) {
       setAnnotationContent(
         <NewAnnotationForm
@@ -183,16 +172,16 @@ function TrackPage() {
           sessionUser={sessionUser}
           setAnnotationContent={setAnnotationContent}
           setHighlightedText={setHighlightedText}
-          newAnnoCords={newAnnoCords}
+          safeHighlightedCoordinates = {temp}
         >
         </NewAnnotationForm>
       )
 
-      let oldActive = document.querySelector('.active')
-      while (oldActive) {
-        oldActive.classList.remove('active')
-        oldActive = document.querySelector('.active')
-      }
+      // let oldActive = document.querySelector('.active')
+      // while (oldActive) {
+      //   oldActive.classList.remove('active')
+      //   oldActive = document.querySelector('.active')
+      // }
     } else {
       setAnnotationContent(<Annotation activeAnnotation={'Please sign in to annotate'} />)
     }
@@ -250,8 +239,6 @@ function TrackPage() {
 
 
   const highlightLyric = (e) => {
-    newAnnoCords.current = []
-
     // Find the last clicked lyric and remove the 'active' class from that lyric's span
     let oldActive = e.target.parentElement.querySelector('.active')
     while (oldActive) {

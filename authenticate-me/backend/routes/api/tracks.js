@@ -32,14 +32,18 @@ router.post('/annotations/:trackId', asyncHandler(async (req, res) => {
     annotation,
     lyric,
     userId,
-    trackId
+    trackId,
+    startIndex,
+    endIndex,
   } = req.body
 
   const newAnnotation = await Annotation.create({
     annotation,
     lyric,
     userId,
-    trackId
+    trackId,
+    startIndex,
+    endIndex,
   })
 
   res.json(newAnnotation)
