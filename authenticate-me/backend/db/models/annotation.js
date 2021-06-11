@@ -5,6 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     trackId: DataTypes.INTEGER,
     annotation: DataTypes.TEXT,
     lyric: DataTypes.TEXT,
+    startIndex: DataTypes.INTEGER,
+    endIndex: DataTypes.INTEGER,
     seedGenerated: DataTypes.BOOLEAN
   }, {});
   Annotation.associate = function (models) {
