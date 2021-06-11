@@ -9,7 +9,7 @@
     "dev:backend": "npm install --prefix backend start",
     "dev:frontend": "npm install --prefix frontend start",
     "sequelize": "npm run --prefix backend sequelize",
-    "sequelize-cli": "npm run --prefix backend sequelize-cli",
+    "sequelize-cli": "npm run sequelize-cli",
     "start": "npm start --prefix backend"
   },
   "keywords": [],
