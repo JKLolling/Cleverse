@@ -15,7 +15,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "sequelize": "^6.6.2"
-  }
+  "dependencies": {}
 }
