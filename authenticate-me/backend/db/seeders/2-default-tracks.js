@@ -37,7 +37,7 @@ module.exports = {
         title: 'Hippie Soldier',
         band: 'Orwells',
         albumTitle: 'Terrible Human Beings',
-        albumCover: '/images/seedPhotos/Hippie_Soldier.jpg',
+        albumCover: 'Terrible_Human_Beings.jpg',
         seedGenerated: true,
       },
       {
@@ -83,7 +83,7 @@ module.exports = {
         title: 'I Wanna Be Adored',
         band: 'The Stone Roses',
         albumTitle: 'The Stone Roses',
-        albumCover: '/images/seedPhotos/I_Wanna_Be_Adored.jpg',
+        albumCover: 'The_Stone_Roses.jpg',
         seedGenerated: true,
       },
       {
@@ -126,7 +126,7 @@ module.exports = {
         title: 'Sex and Candy',
         band: 'Marcy Playground',
         albumTitle: 'Marcy Playground',
-        albumCover: '/images/seedPhotos/Sex_and_Candy.jpg',
+        albumCover: 'Sex_And_Candy.png',
         seedGenerated: true,
       },
       {
@@ -188,7 +188,7 @@ module.exports = {
         title: 'Glory Box',
         band: 'Portishead',
         albumTitle: 'Dummy',
-        albumCover: '/images/seedPhotos/Glory_Box.jpg',
+        albumCover: 'Dummy.jpg',
         seedGenerated: true,
       },
       {
@@ -270,7 +270,7 @@ module.exports = {
         title: 'Paper Planes',
         band: 'M.I.A.',
         albumTitle: 'Kala',
-        albumCover: '/images/seedPhotos/Paper_Planes.jpg',
+        albumCover: 'Kala.jpg',
         seedGenerated: true,
       },
       {
@@ -358,7 +358,7 @@ module.exports = {
         title: 'Walk on the Wild Side',
         band: 'Lou Reed',
         albumTitle: 'Transformer',
-        albumCover: '/images/seedPhotos/Walk_on_the_Wild_Side.jpg',
+        albumCover: 'Transformer.jpg',
         seedGenerated: true,
       },
       {
@@ -424,7 +424,7 @@ module.exports = {
         title: 'Rhinestone Eyes',
         band: 'Gorillaz',
         albumTitle: 'Plastic Beach',
-        albumCover: '/images/seedPhotos/Rhinestone_Eyes.jpg',
+        albumCover: 'Plastic_Beach.jpg',
         seedGenerated: true,
       },
       {
@@ -478,7 +478,7 @@ module.exports = {
         title: 'Mary Jane\'s Last Dance',
         band: 'Tom Petty and the Heartbreakers',
         albumTitle: 'Tom Petty and the Heartbreakers: Greatest Hits (1993)',
-        albumCover: "/images/seedPhotos/Mary_Jane's_Last_Dance.jpg",
+        albumCover: 'Tom_Petty_Greatest_Hits.png',
         seedGenerated: true,
       },
       {
@@ -565,7 +565,7 @@ module.exports = {
         title: 'Hustle & Motivate',
         band: 'Nipsey Hussle',
         albumTitle: 'Victory Lap',
-        albumCover: '/images/seedPhotos/Hustle_&_Motivate.jpg',
+        albumCover: 'Victory_Lap.jpg',
         seedGenerated: true,
       },
       {
@@ -671,19 +671,16 @@ module.exports = {
         band: 'Daft Punk',
         featuring: 'Julian Casablancas',
         albumTitle: 'Random Access Memories',
-        albumCover: '/images/seedPhotos/Instant_Crush.jpg',
+        albumCover: 'Instant_Crush.png',
         seedGenerated: true,
       },
+
+
+
+
+
+
     ]
-
-    defaultTracks.forEach(track => {
-      let temp = (track.lyrics.split('\n'))
-      temp = temp.map(string => string.trimLeft())
-      temp = temp.join('\n')
-      track.lyrics = temp
-    })
-
-
     return queryInterface.bulkInsert('Tracks', defaultTracks, {});
   },
 

@@ -7,7 +7,7 @@ module.exports = {
     const Op = Sequelize.Op
 
     const tracksArr = await queryInterface.sequelize.query(
-      'SELECT id,title,lyrics FROM "Tracks" WHERE "seedGenerated"=true ', {
+      'SELECT id,title FROM "Tracks" WHERE "seedGenerated"=true ', {
       type: queryInterface.sequelize.QueryTypes.SELECT
     })
     const users = await queryInterface.sequelize.query(
@@ -15,11 +15,9 @@ module.exports = {
       type: queryInterface.sequelize.QueryTypes.SELECT
     })
 
-    const lyricsObj = {}
     const tracksObj = {}
     tracksArr.forEach(track => {
       tracksObj[track.title] = track.id
-      lyricsObj[track.id] = track.lyrics
     });
 
     const defaultAnnos = [
@@ -45,18 +43,18 @@ module.exports = {
         trackId: tracksObj['I Wanna Be Adored'],
         userId: users[0].id,
         annotation: `Furthering the religious theme set out in the selling of souls, the adoration is no longer reserved for god alone. This is what is ‘evil’, the need for self-adoration`,
-        lyric: `Wanna
-        I wanna, I wanna be adored
-        I wanna, I wanna, I wanna be adored
-        I wanna, I wanna, I gotta be adored`,
+        lyric: `I wanna be adored
+        I wanna be adored`,
         seedGenerated: true,
       },
       {
         trackId: tracksObj['I Wanna Be Adored'],
         userId: users[0].id,
         annotation: `Furthering the religious theme set out in the selling of souls, the adoration is no longer reserved for god alone. This is what is ‘evil’, the need for self-adoration`,
-        lyric: `I wanna be adored
-        I wanna be adored`,
+        lyric: `Wanna
+        I wanna, I wanna be adored
+        I wanna, I wanna, I wanna be adored
+        I wanna, I wanna, I gotta be adored`,
         seedGenerated: true,
       },
       {
@@ -385,52 +383,7 @@ module.exports = {
       }
     ]
 
-    const coordinatedAnnos = []
-    for (let i = 0; i < defaultAnnos.length; i++) {
-      let currentAnno = defaultAnnos[i]
-
-      let annotation = currentAnno.annotation
-      annotation = annotation.replace(/          /g, '')
-      annotation = annotation.replace(/        /g, '')
-      currentAnno.annotation = annotation
-
-      let lyric = currentAnno.lyric
-      if (!lyric) {
-        coordinatedAnnos.push(currentAnno)
-        continue
-      }
-
-      lyric = lyric.replace(/          /g, '')
-      lyric = lyric.replace(/        /g, '')
-      currentAnno.lyric = lyric
-
-      let trackId = currentAnno.trackId
-      let full_lyrics = lyricsObj[trackId]
-
-      let coordinateArray = []
-      let index = 0
-      while (index > -1) {
-        let start = full_lyrics.indexOf(lyric, index)
-        let end = start + lyric.length
-
-        if (start > -1) {
-          coordinateArray.push([start, end])
-          index = end
-        } else {
-          index = -1
-        }
-      }
-
-      coordinateArray.forEach((tuple) => {
-        coordinatedAnnos.push({
-          ...currentAnno,
-          startIndex: tuple[0],
-          endIndex: tuple[1]
-        })
-      })
-    }
-
-    return queryInterface.bulkInsert('Annotations', coordinatedAnnos, {});
+    return queryInterface.bulkInsert('Annotations', defaultAnnos, {});
   },
 
   down: (queryInterface, Sequelize) => {

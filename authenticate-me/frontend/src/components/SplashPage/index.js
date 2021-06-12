@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import { csrfFetch } from '../../store/csrf'
+import * as trackActions from '../../store/track'
 import './SplashPage.css'
 
 function SplashPage() {
-  const [trackList, setTrackList] = useState({})
+  const dispatch = useDispatch()
+  const tracksObj = useSelector(state => state.track)
 
-  // Retrieve the tracklist
+  const [isLoaded, setIsLoaded] = useState(false)
+
   useEffect(() => {
-    (async () => {
-      const res = await csrfFetch(`/api/tracks/`)
-      const data = await res.json()
-      setTrackList(data)
-    })()
-  }, [])
+    dispatch(trackActions.asyncFetchTrackList()).then(() => setIsLoaded(true))
+
+  }, [dispatch])
+
+  let array = []
+  for (let key in tracksObj) {
+    tracksObj[key].imgSrc = tracksObj[key].title?.split(' ').join('_')
+    array.push(tracksObj[key])
+  }
 
   return (
     <div className='splash_wrapper'>
       <div className='splash_listWrapper'>
-        {Object.values(trackList).map((track, i) => {
+        {array.map((track, i) => {
           return <NavLink to={`/tracks/${track.id}`} key={track.title + track.band} className='splash_trackListItem'>
             <span className='splash_trackListIndex'>
               {i + 1}
             </span>
             <span className='splash_trackListAlbumCover'>
-              <img src={track.albumCover} className='splash_trackListAlbumCover' />
+              <img src={`/images/seedPhotos/${track.imgSrc}.jpg`} className='splash_trackListAlbumCover' />
             </span>
             <span className='splash_trackListTitle'>
               {track.title}
